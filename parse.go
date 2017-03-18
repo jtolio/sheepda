@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"unicode"
@@ -87,11 +88,22 @@ func ParseApplication(s *Stream) (Expr, error) {
 	if err != nil {
 		return nil, err
 	}
-	err = s.AssertMatch(')')
-	if err != nil {
-		return nil, err
+	result := &ApplicationExpr{Func: fn, Arg: arg}
+	for {
+		r, err := s.Peek()
+		if err != nil {
+			return nil, err
+		}
+		if r == ')' {
+			s.Next()
+			return result, s.SwallowWhitespace()
+		}
+		next, err := ParseExpr(s)
+		if err != nil {
+			return nil, err
+		}
+		result = &ApplicationExpr{Func: result, Arg: next}
 	}
-	return &ApplicationExpr{Func: fn, Arg: arg}, nil
 }
 
 type VariableExpr struct {
@@ -127,7 +139,32 @@ type assignment struct {
 	RHS Expr
 }
 
-func Parse(s *Stream) (Expr, error) {
+type ProgramExpr struct {
+	Expr
+}
+
+func (e *ProgramExpr) String() string {
+	var out bytes.Buffer
+	expr := e.Expr
+	applications := false
+	for {
+		if t, ok := expr.(*ApplicationExpr); ok {
+			if fn, ok := t.Func.(*LambdaExpr); ok {
+				fmt.Fprintf(&out, "%s = %s\n", fn.Arg, t.Arg)
+				expr = fn.Body
+				applications = true
+				continue
+			}
+		}
+		if applications {
+			fmt.Fprintln(&out)
+		}
+		fmt.Fprint(&out, expr)
+		return out.String()
+	}
+}
+
+func Parse(s *Stream) (*ProgramExpr, error) {
 	err := s.SwallowWhitespace()
 	if err != nil {
 		return nil, err
@@ -145,21 +182,20 @@ func Parse(s *Stream) (Expr, error) {
 					Arg:  assignments[i].RHS,
 				}
 			}
-			return expr, nil
+			return &ProgramExpr{Expr: expr}, nil
 		}
-		switch t := expr.(type) {
-		default:
+		t, ok := expr.(*VariableExpr)
+		if !ok {
 			return nil, fmt.Errorf("unparsed code remaining")
-		case *VariableExpr:
-			err = s.AssertMatch('=')
-			if err != nil {
-				return nil, err
-			}
-			rhs, err := ParseExpr(s)
-			if err != nil {
-				return nil, err
-			}
-			assignments = append(assignments, assignment{LHS: t.Name, RHS: rhs})
 		}
+		err = s.AssertMatch('=')
+		if err != nil {
+			return nil, err
+		}
+		rhs, err := ParseExpr(s)
+		if err != nil {
+			return nil, err
+		}
+		assignments = append(assignments, assignment{LHS: t.Name, RHS: rhs})
 	}
 }

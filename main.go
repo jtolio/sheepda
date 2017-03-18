@@ -1,19 +1,47 @@
 package main
 
 import (
+	"flag"
 	"fmt"
+	"io/ioutil"
 	"os"
 )
 
+var (
+	skipAssignments = flag.Bool("a", false, "if true, skip assignments")
+)
+
 func main() {
-	expr, err := Parse(NewStream(os.Stdin))
-	if err != nil {
-		panic(err)
+	flag.Parse()
+	switch flag.Arg(0) {
+	default:
+		fmt.Fprintf(os.Stderr, "Usage: %s <parsed|output|result>\n", os.Args[0])
+		return
+	case "parsed", "output", "result":
 	}
-	fmt.Println("Parsed:", expr)
-	val, err := Eval(NewScopeWithBuiltins(), expr)
+	prog, err := Parse(NewStream(os.Stdin))
 	if err != nil {
-		panic(err)
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(-1)
 	}
-	fmt.Println("Evaluated:", val)
+	if flag.Arg(0) == "parsed" {
+		if *skipAssignments {
+			fmt.Println(prog.Expr)
+		} else {
+			fmt.Println(prog)
+		}
+		return
+	}
+	out := ioutil.Discard
+	if flag.Arg(0) == "output" {
+		out = os.Stdout
+	}
+	val, err := Eval(NewContext(out), NewScopeWithBuiltins(), prog)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(-1)
+	}
+	if flag.Arg(0) == "result" {
+		fmt.Println(val)
+	}
 }

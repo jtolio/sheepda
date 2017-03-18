@@ -2,7 +2,16 @@ package main
 
 import (
 	"fmt"
+	"io"
 )
+
+type Context struct {
+	out io.Writer
+}
+
+func NewContext(out io.Writer) *Context {
+	return &Context{out: out}
+}
 
 type Value interface {
 	String() string
@@ -25,30 +34,26 @@ func (b Byte) String() string {
 
 type Builtin struct {
 	Name      string
-	Transform func(Value) (Value, error)
+	Transform func(*Context, Value) (Value, error)
 }
 
 func (b *Builtin) String() string {
 	return fmt.Sprintf("builtin(%s)", b.Name)
 }
 
-func nextByte(v Value) (Value, error) {
-	switch t := v.(type) {
-	case Byte:
+func nextByte(ctx *Context, v Value) (Value, error) {
+	if t, ok := v.(Byte); ok {
 		return Byte(t + 1), nil
-	default:
-		return nil, fmt.Errorf("type %T is not a byte", v)
 	}
+	return nil, fmt.Errorf("type %T is not a byte", v)
 }
 
-func printByte(v Value) (Value, error) {
-	switch t := v.(type) {
-	case Byte:
-		_, err := fmt.Print(string(t))
+func printByte(ctx *Context, v Value) (Value, error) {
+	if t, ok := v.(Byte); ok {
+		_, err := fmt.Fprint(ctx.out, string(t))
 		return v, err
-	default:
-		return nil, fmt.Errorf("type %T is not a byte", v)
 	}
+	return nil, fmt.Errorf("type %T is not a byte", v)
 }
 
 type Scope struct {
@@ -63,9 +68,9 @@ func NewScope() *Scope {
 
 func NewScopeWithBuiltins() *Scope {
 	return NewScope().
-		Set("null", Byte(0)).
-		SetBuiltin("next-byte", nextByte).
-		SetBuiltin("print-byte", printByte)
+		Set("BYTE_NULL", Byte(0)).
+		SetBuiltin("BYTE_NEXT", nextByte).
+		SetBuiltin("BYTE_PRINT", printByte)
 }
 
 func (s *Scope) Get(name string) Value {
@@ -82,42 +87,47 @@ func (s *Scope) Set(name string, value Value) *Scope {
 	return &Scope{Name: name, Value: value, Parent: s}
 }
 
-func (s *Scope) SetBuiltin(name string, t func(Value) (Value, error)) *Scope {
+func (s *Scope) SetBuiltin(name string,
+	t func(*Context, Value) (Value, error)) *Scope {
 	return s.Set(name, &Builtin{Name: name, Transform: t})
 }
 
-func Call(fn, arg Value) (Value, error) {
-	switch t := fn.(type) {
-	case *Closure:
-		return Eval(t.Scope.Set(t.Lambda.Arg, arg), t.Lambda.Body)
-	case *Builtin:
-		return t.Transform(arg)
-	default:
-		return nil, fmt.Errorf("not callable")
-	}
-}
-
-func Eval(s *Scope, expr Expr) (Value, error) {
-	switch t := expr.(type) {
-	case *VariableExpr:
-		val := s.Get(t.Name)
-		if val == nil {
-			return nil, fmt.Errorf("invalid variable lookup: %s", t.Name)
+func Eval(ctx *Context, s *Scope, expr Expr) (Value, error) {
+trampoline:
+	for {
+		switch t := expr.(type) {
+		case *ProgramExpr:
+			expr = t.Expr
+			continue trampoline
+		case *VariableExpr:
+			val := s.Get(t.Name)
+			if val == nil {
+				return nil, fmt.Errorf("invalid variable lookup: %s", t.Name)
+			}
+			return val, nil
+		case *ApplicationExpr:
+			fn, err := Eval(ctx, s, t.Func)
+			if err != nil {
+				return nil, err
+			}
+			arg, err := Eval(ctx, s, t.Arg)
+			if err != nil {
+				return nil, err
+			}
+			switch t := fn.(type) {
+			case *Closure:
+				s = t.Scope.Set(t.Lambda.Arg, arg)
+				expr = t.Lambda.Body
+				continue trampoline
+			case *Builtin:
+				return t.Transform(ctx, arg)
+			default:
+				return nil, fmt.Errorf("not callable")
+			}
+		case *LambdaExpr:
+			return &Closure{Scope: s, Lambda: t}, nil
+		default:
+			return nil, fmt.Errorf("unknown expression")
 		}
-		return val, nil
-	case *ApplicationExpr:
-		fn, err := Eval(s, t.Func)
-		if err != nil {
-			return nil, err
-		}
-		arg, err := Eval(s, t.Arg)
-		if err != nil {
-			return nil, err
-		}
-		return Call(fn, arg)
-	case *LambdaExpr:
-		return &Closure{Scope: s, Lambda: t}, nil
-	default:
-		return nil, fmt.Errorf("unknown expression")
 	}
 }

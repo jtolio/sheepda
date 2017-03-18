@@ -19,6 +19,17 @@ func NewStream(in io.Reader) *Stream {
 
 func (s *Stream) EOF() bool { return s.err == io.EOF }
 
+func (s *Stream) readRune() (rune, error) {
+	r, _, err := s.data.ReadRune()
+	if err != nil {
+		return 0, err
+	}
+	if r == unicode.ReplacementChar {
+		return 0, fmt.Errorf("invalid unicode")
+	}
+	return r, nil
+}
+
 func (s *Stream) fillNext() error {
 	if s.next != nil {
 		return nil
@@ -26,14 +37,23 @@ func (s *Stream) fillNext() error {
 	if s.err != nil {
 		return s.err
 	}
-	r, _, err := s.data.ReadRune()
+	r, err := s.readRune()
 	if err != nil {
 		s.err = err
 		return err
 	}
-	if r == unicode.ReplacementChar {
-		s.err = fmt.Errorf("invalid unicode")
-		return s.err
+	if r == '#' {
+		for {
+			r, err := s.readRune()
+			if err != nil {
+				s.err = err
+				return err
+			}
+			if r == '\n' {
+				break
+			}
+		}
+		return s.fillNext()
 	}
 	s.next = &r
 	return nil
