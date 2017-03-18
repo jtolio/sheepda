@@ -114,10 +114,10 @@ trampoline:
 			if err != nil {
 				return nil, err
 			}
-			switch t := fn.(type) {
+			switch c := fn.(type) {
 			case *Closure:
-				s = t.Scope.Set(t.Lambda.Arg, arg)
-				expr = t.Lambda.Body
+				s = c.Scope.Set(c.Lambda.Arg, arg)
+				expr = c.Lambda.Body
 				continue trampoline
 			case *Builtin:
 				return t.Transform(ctx, arg)
