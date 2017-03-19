@@ -9,8 +9,8 @@ grammar:
 
 ```
 <expr> ::= <variable>
-         | `λ`<variable>`.`<expr>
-         | `(`<expr> <expr>`)`
+         | `λ` <variable> `.` <expr>
+         | `(` <expr> <expr> `)`
 ```
 
 two forms of syntax sugar are added.
@@ -25,7 +25,7 @@ before the first real expression, if
 is encountered, it is turned into
 
 ```
-`(λ`<variable>`.`<rest> <expr>`)`
+`(` `λ` <variable> `.` <rest> <expr> `)`
 ```
 
 second, if more than one argument is encountered, it is assumed to be curried.
