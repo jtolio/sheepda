@@ -60,6 +60,7 @@ for = λn.λf.(
         λ_. (do2 (f current)
                  (recurse (pred remaining) (succ current) f))))
   n 0 f)
+let = \x.\f.(f x)
 
 # output
 print-byte = PRINT_BYTE
