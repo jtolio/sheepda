@@ -26,13 +26,13 @@ pair-first = λp.(p true)
 pair-second = λp.(p false)
 
 # more number stuff now that we have pairs
-zero? = λn.(n λ_.false true)
 pred = λn.(
   (λn.λf.λx. (pair-second (n
     λp.(make-pair (f (pair-first p)) (pair-first p))
     (make-pair x x))) n)
   succ 0)
 - = λm.λn.(n pred m)
+zero? = λn.(n λ_.false true)
 eq? = λm.λn.(and (zero? (- m n)) (zero? (- n m)))
 / = (Y λ/.λm.λn.
   (if (eq? m n)
@@ -50,9 +50,9 @@ car = λl.(pair-first (pair-second l))
 cdr = λl.(pair-second (pair-second l))
 
 # sequences of steps
-do2 = λa.λb.b
-do3 = λa.do2
-do4 = λa.do3
+do2 = λ_.λx.x
+do3 = λ_.do2
+do4 = λ_.do3
 for = λn.λf.(
   (Y λrecurse.λremaining.λcurrent.λf.
     (if (zero? remaining)
@@ -62,7 +62,7 @@ for = λn.λf.(
   n 0 f)
 
 # output
-print-byte = BYTE_PRINT
+print-byte = PRINT_BYTE
 print-list = (Y λrecurse.λl.
     (if (nil? l)
         λ_. void

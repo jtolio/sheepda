@@ -16,7 +16,7 @@ func (b Byte) String() string {
 
 type Builtin struct {
 	Name      string
-	Transform func(*Context, Value) (Value, bool, error)
+	Transform func(*Context, Value) (val Value, cacheable bool, err error)
 }
 
 func (b *Builtin) String() string {
@@ -50,17 +50,17 @@ func NewScope() *Scope {
 
 func NewScopeWithBuiltins() *Scope {
 	expr, err := Parse(NewStream(bytes.NewReader([]byte(`
-    \n.(\a.\b.b (BYTE_PRINT (n BYTE_NEXT BYTE_NULL)) n)
+    \n.(\a.\b.b (print (n next null)) n)
   `))))
 	if err != nil {
 		// programmer screwed up the builtin above
 		panic(err)
 	}
-	return NewScope().Set("BYTE_PRINT", NewClosure(
+	return NewScope().Set("PRINT_BYTE", NewClosure(
 		NewScope().
-			Set("BYTE_NULL", Byte(0)).
-			SetBuiltin("BYTE_PRINT", printByte).
-			SetBuiltin("BYTE_NEXT", nextByte),
+			Set("null", Byte(0)).
+			SetBuiltin("print", printByte).
+			SetBuiltin("next", nextByte),
 		expr.Expr.(*LambdaExpr)))
 }
 

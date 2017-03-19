@@ -11,7 +11,8 @@ import (
 )
 
 var (
-	skipAssignments = flag.Bool("a", false, "if true, skip assignments")
+	skipAssignments = flag.Bool("a", false,
+		"if provided, skip assignments when pretty-printing in parsed mode")
 )
 
 func main() {

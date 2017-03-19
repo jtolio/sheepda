@@ -34,7 +34,8 @@ func (c *Closure) String() string {
 	return c.Lambda.String()
 }
 
-func Eval(ctx *Context, s *Scope, expr Expr) (Value, bool, error) {
+func Eval(ctx *Context, s *Scope, expr Expr) (
+	val Value, cacheable bool, err error) {
 	switch t := expr.(type) {
 	case *ProgramExpr:
 		return Eval(ctx, s, t.Expr)
