@@ -62,7 +62,7 @@ for = λn.λf.(
   n 0 f)
 
 # output
-print-byte = λn.(BYTE_PRINT (n BYTE_NEXT BYTE_NULL))
+print-byte = BYTE_PRINT
 print-list = (Y λrecurse.λl.
     (if (nil? l)
         λ_. void
