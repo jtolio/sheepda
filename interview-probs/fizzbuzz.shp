@@ -15,16 +15,16 @@ fizzbuzzmsg = (cons (num 0 7 0)
           (cons (num 1 2 2)
           (cons (num 1 2 2) nil))))))))
 
-fizzbuzz = \n.
-  (for n \i.
+fizzbuzz = λn.
+  (for n λi.
     (do2
       (if (zero? (% i 3))
-          \_. (if (zero? (% i 5))
-                  \_. (print-list fizzbuzzmsg)
-                  \_. (print-list fizzmsg))
-          \_. (if (zero? (% i 5))
-                  \_. (print-list buzzmsg)
-                  \_. (print-list (itoa i))))
+          λ_. (if (zero? (% i 5))
+                  λ_. (print-list fizzbuzzmsg)
+                  λ_. (print-list fizzmsg))
+          λ_. (if (zero? (% i 5))
+                  λ_. (print-list buzzmsg)
+                  λ_. (print-list (itoa i))))
       (print-newline nil)))
 
 (fizzbuzz (num 1 0 1))

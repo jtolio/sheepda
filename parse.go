@@ -48,7 +48,7 @@ func (e *LambdaExpr) String() string {
 }
 
 func ParseLambda(s *Stream) (Expr, error) {
-	err := s.AssertMatch('\\')
+	err := s.AssertMatch('\\', 'λ')
 	if err != nil {
 		return nil, err
 	}
@@ -77,7 +77,7 @@ func (e *ApplicationExpr) String() string {
 }
 
 func ParseApplication(s *Stream) (Expr, error) {
-	err := s.AssertMatch('(', 'λ')
+	err := s.AssertMatch('(')
 	if err != nil {
 		return nil, err
 	}

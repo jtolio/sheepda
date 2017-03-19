@@ -1,8 +1,8 @@
-reverse-list = \l.(
-  (Y \recurse. \old.\new.
+reverse-list = λl.(
+  (Y λrecurse. λold.λnew.
     (if (nil? old)
-        \_.new
-        \_.(recurse (cdr old) (cons (car old) new))))
+        λ_.new
+        λ_.(recurse (cdr old) (cons (car old) new))))
   l nil)
 
 string = (cons (num 0 7 2)

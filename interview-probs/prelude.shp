@@ -1,82 +1,82 @@
 # Some combinators for recursion.
-U = \f.(f f)
-Y = (U \h.\f.(f \x.(((h h) f) x)))
-void = \x.(U U)
+U = λf.(f f)
+Y = (U λh.λf.(f λx.(((h h) f) x)))
+void = λx.(U U)
 
 # we need numbers, so define some numbers
-0 = \f.\x.x
-succ = \n.\f.\x.(f (n f x))
-+ = \m.\n.\f.\x.((m succ n) f x)
-* = \m.\n.\x.(m (n x))
+0 = λf.λx.x
+succ = λn.λf.λx.(f (n f x))
++ = λm.λn.λf.λx.((m succ n) f x)
+* = λm.λn.λx.(m (n x))
 1 = (succ 0)  2 = (succ 1)  3 = (succ 2)  4 = (succ 3)  5 = (succ 4)
 6 = (succ 5)  7 = (succ 6)  8 = (succ 7)  9 = (succ 8) 10 = (succ 9)
-num = \a.\b.\c. (+ (+ (* (* 10 10) a) (* 10 b)) c)
+num = λa.λb.λc. (+ (+ (* (* 10 10) a) (* 10 b)) c)
 
 # logic
-true = \t.\f.t
-false = \t.\f.f
-if = \p.\a.\b.((p a b) void)
-not = \p.\t.\f.(p f t)
-and = \a.\b.(a b false)
-or = \a.\b.(a true b)
+true = λt.λf.t
+false = λt.λf.f
+if = λp.λa.λb.((p a b) void)
+not = λp.λt.λf.(p f t)
+and = λa.λb.(a b false)
+or = λa.λb.(a true b)
 
 # pairs
-make-pair = \x.\y.\t.(t x y)
-pair-first = \p.(p true)
-pair-second = \p.(p false)
+make-pair = λx.λy.λt.(t x y)
+pair-first = λp.(p true)
+pair-second = λp.(p false)
 
 # more number stuff now that we have pairs
-zero? = \n.(n \_.false true)
-pred = \n.(
-  (\n.\f.\x. (pair-second (n
-    \p.(make-pair (f (pair-first p)) (pair-first p))
+zero? = λn.(n λ_.false true)
+pred = λn.(
+  (λn.λf.λx. (pair-second (n
+    λp.(make-pair (f (pair-first p)) (pair-first p))
     (make-pair x x))) n)
   succ 0)
-- = \m.\n.(n pred m)
-eq? = \m.\n.(and (zero? (- m n)) (zero? (- n m)))
-/ = (Y \/.\m.\n.
+- = λm.λn.(n pred m)
+eq? = λm.λn.(and (zero? (- m n)) (zero? (- n m)))
+/ = (Y λ/.λm.λn.
   (if (eq? m n)
-      \_. 1
-      \_. (if (zero? (- m n))
-          \_. 0
-          \_. (+ 1 (/ (- m n) n)))))
-% = \m.\n. (- m (* (/ m n) n))
+      λ_. 1
+      λ_. (if (zero? (- m n))
+          λ_. 0
+          λ_. (+ 1 (/ (- m n) n)))))
+% = λm.λn. (- m (* (/ m n) n))
 
 # lists
 nil = (make-pair false void)
-nil? = \l.(not (pair-first l))
-cons = \e.\l.(make-pair true (make-pair e l))
-car = \l.(pair-first (pair-second l))
-cdr = \l.(pair-second (pair-second l))
+nil? = λl.(not (pair-first l))
+cons = λe.λl.(make-pair true (make-pair e l))
+car = λl.(pair-first (pair-second l))
+cdr = λl.(pair-second (pair-second l))
 
 # sequences of steps
-do2 = \a.\b.b
-do3 = \a.do2
-do4 = \a.do3
-for = \n.\f.(
-  (Y \recurse.\remaining.\current.\f.
+do2 = λa.λb.b
+do3 = λa.do2
+do4 = λa.do3
+for = λn.λf.(
+  (Y λrecurse.λremaining.λcurrent.λf.
     (if (zero? remaining)
-        \_. void
-        \_. (do2 (f current)
+        λ_. void
+        λ_. (do2 (f current)
                  (recurse (pred remaining) (succ current) f))))
   n 0 f)
 
 # output
-print-byte = \n.(BYTE_PRINT (n BYTE_NEXT BYTE_NULL))
-print-list = (Y \recurse.\l.
+print-byte = λn.(BYTE_PRINT (n BYTE_NEXT BYTE_NULL))
+print-list = (Y λrecurse.λl.
     (if (nil? l)
-        \_. void
-        \_. (do2 (print-byte (car l))
+        λ_. void
+        λ_. (do2 (print-byte (car l))
                  (recurse (cdr l)))))
-print-newline = \_. (print-byte (num 0 1 0))
+print-newline = λ_. (print-byte (num 0 1 0))
 
 # itoa
 zero-byte = (num 0 4 8)
-itoa = \n.(
-  (Y \recurse.\n.\result.
+itoa = λn.(
+  (Y λrecurse.λn.λresult.
     (if (zero? n)
-        \_. (if (nil? result)
-               \_. (cons zero-byte nil)
-               \_. result)
-        \_. (recurse (/ n 10) (cons (+ zero-byte (% n 10)) result))))
+        λ_. (if (nil? result)
+               λ_. (cons zero-byte nil)
+               λ_. result)
+        λ_. (recurse (/ n 10) (cons (+ zero-byte (% n 10)) result))))
   n nil)
