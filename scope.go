@@ -49,9 +49,8 @@ func NewScope() *Scope {
 }
 
 func NewScopeWithBuiltins() *Scope {
-	expr, err := Parse(NewStream(bytes.NewReader([]byte(`
-    \n.(\a.\b.b (print (n next null)) n)
-  `))))
+	expr, err := ParseExpr(NewStream(bytes.NewReader([]byte(
+		`\n.(\a.\b.b (print (n next null)) n)`))))
 	if err != nil {
 		// programmer screwed up the builtin above
 		panic(err)
@@ -61,7 +60,7 @@ func NewScopeWithBuiltins() *Scope {
 			Set("null", Byte(0)).
 			SetBuiltin("print", printByte).
 			SetBuiltin("next", nextByte),
-		expr.Expr.(*LambdaExpr)))
+		expr.(*LambdaExpr)))
 }
 
 func (s *Scope) Get(name string) Value {
