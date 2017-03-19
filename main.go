@@ -36,7 +36,7 @@ func main() {
 	if flag.Arg(0) == "output" {
 		out = os.Stdout
 	}
-	val, err := Eval(NewContext(out), NewScopeWithBuiltins(), prog)
+	val, _, err := Eval(NewContext(out), NewScopeWithBuiltins(), prog)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(-1)

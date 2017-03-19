@@ -1,3 +1,3 @@
 # sheepda
 
-a lambda calculus interpreter
+a memoizing lambda calculus interpreter
