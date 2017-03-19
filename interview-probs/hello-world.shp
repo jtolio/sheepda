@@ -1,67 +1,16 @@
-# we'll need recursion, so define some combinators
-U = \f.(f f)
-Y = (U \h.\f.(f \x.(((h h) f) x)))
-run-forever = \x.(U U)
-
-# we need numbers, so define some numbers
-0 = \f.\x.x
-succ = \n.\f.\x.(f (n f x))
-+ = \m.\n.\f.\x.((m succ n) f x)
-* = \m.\n.\x.(m (n x))
-
-# we'll need booleans
-true = \t.\f.t
-false = \t.\f.f
-
-# and some logic helpers
-not = \p.\t.\f.(p f t)
-if = \p.\a.\b.((p a b) run-forever)
-
-# we'll need pairs
-make-pair = \x.\y. \t.(t x y)
-first = \p.(p true)
-second = \p.(p false)
-
-# we'll need to do multiple things since printing is side-effecting
-do2 = \a.\b.b
-
-# we'll need lists
-nil = (make-pair false run-forever)
-nil? = \l. (not (first l))
-cons = \a.\b.(make-pair true (make-pair a b))
-car = \l. (first (second l))
-cdr = \l. (second (second l))
-
-# let's define some hex digit nibbles
-x0 = 0
-x1 = (succ x0)  x2 = (succ x1)  x3 = (succ x2)  x4 = (succ x3)  x5 = (succ x4)
-x6 = (succ x5)  x7 = (succ x6)  x8 = (succ x7)  x9 = (succ x8)  xA = (succ x9)
-xB = (succ xA)  xC = (succ xB)  xD = (succ xC)  xE = (succ xD)  xF = (succ xE)
-x10 = (succ xF)
-
-# let's make a function that can create bytes from nibbles using the builtins
-make-byte = \x.\y. ((+ (* x x10) y) BYTE_NEXT BYTE_NULL)
-
-# okay! we can print a list
-print-list = (Y \print-list.\l.
-  (if (nil? l)
-      \_. nil
-      \_. (do2 (BYTE_PRINT (car l))
-               (print-list (cdr l)))))
-
-# let's make a list. no syntax sugar for strings!
-(print-list
-  (cons (make-byte x4 x8)
-  (cons (make-byte x6 x5)
-  (cons (make-byte x6 xC)
-  (cons (make-byte x6 xC)
-  (cons (make-byte x6 xF)
-  (cons (make-byte x2 xC)
-  (cons (make-byte x2 x0)
-  (cons (make-byte x7 x7)
-  (cons (make-byte x6 xF)
-  (cons (make-byte x7 x2)
-  (cons (make-byte x6 xC)
-  (cons (make-byte x6 x4)
-  (cons (make-byte x2 x1)
-  (cons (make-byte x0 xA) nil)))))))))))))))
+(do2
+  (print-list
+    (cons (num 0 7 2)
+    (cons (num 1 0 1)
+    (cons (num 1 0 8)
+    (cons (num 1 0 8)
+    (cons (num 1 1 1)
+    (cons (num 0 4 4)
+    (cons (num 0 3 2)
+    (cons (num 1 1 9)
+    (cons (num 1 1 1)
+    (cons (num 1 1 4)
+    (cons (num 1 0 8)
+    (cons (num 1 0 0)
+    (cons (num 0 3 3) nil))))))))))))))
+  (print-newline void))
