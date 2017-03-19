@@ -1,3 +1,6 @@
+# expects prelude.shp first.
+# run like: cat prelude.shp hello-world.shp | ./sheepda output
+
 (do2
   (print-list
     (cons (num 0 7 2)

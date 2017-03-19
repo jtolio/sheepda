@@ -1,3 +1,6 @@
+# expects prelude.shp first.
+# run like: cat prelude.shp string-reverse.shp | ./sheepda output
+
 reverse-list = λl.(
   (Y λrecurse. λold.λnew.
     (if (nil? old)

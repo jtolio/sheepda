@@ -1,3 +1,6 @@
+# expects prelude.shp first.
+# run like: cat prelude.shp fizzbuzz.shp | ./sheepda output
+
 fizzmsg = (cons (num 0 7 0)
           (cons (num 1 0 5)
           (cons (num 1 2 2)
