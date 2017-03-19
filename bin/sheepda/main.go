@@ -8,6 +8,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+
+	"github.com/jtolds/sheepda"
 )
 
 var (
@@ -23,7 +25,7 @@ func main() {
 		return
 	case "parsed", "output", "result":
 	}
-	prog, err := Parse(NewStream(os.Stdin))
+	prog, err := sheepda.Parse(sheepda.NewStream(os.Stdin))
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(-1)
@@ -40,7 +42,8 @@ func main() {
 	if flag.Arg(0) == "output" {
 		out = os.Stdout
 	}
-	val, _, err := Eval(NewContext(out), NewScopeWithBuiltins(), prog)
+	val, _, err := sheepda.Eval(
+		sheepda.NewContext(out), sheepda.NewScopeWithBuiltins(), prog)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(-1)

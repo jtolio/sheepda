@@ -1,7 +1,7 @@
 // Copyright (C) 2017 JT Olds
 // See LICENSE for copying information.
 
-package main
+package sheepda
 
 import (
 	"fmt"

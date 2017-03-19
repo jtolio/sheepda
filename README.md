@@ -14,7 +14,7 @@ with only one builtin:
 
 ```
 cd $(mktemp -d)
-GOPATH=$(pwd) go get github.com/jtolds/sheepda
+GOPATH=$(pwd) go get github.com/jtolds/sheepda/...
 cat src/github.com/jtolds/sheepda/interview-probs/{prelude,hello-world}.shp |
     bin/sheepda output
 ```

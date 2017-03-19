@@ -1,7 +1,7 @@
 // Copyright (C) 2017 JT Olds
 // See LICENSE for copying information.
 
-package main
+package sheepda
 
 import (
 	"bytes"
@@ -10,7 +10,7 @@ import (
 	"unicode"
 )
 
-func isVariableRune(ch rune) bool {
+func IsVariableRune(ch rune) bool {
 	return !unicode.IsSpace(ch) &&
 		ch != '\\' && ch != '(' && ch != ')' && ch != '.' &&
 		ch != '=' && ch != 'λ'
@@ -25,7 +25,7 @@ func ParseVariable(s *Stream) (name string, err error) {
 			}
 			return "", err
 		}
-		if !isVariableRune(ch) {
+		if !IsVariableRune(ch) {
 			break
 		}
 		name += string(ch)
@@ -50,7 +50,7 @@ func (e *LambdaExpr) String() string {
 	return fmt.Sprintf("λ%s.%s", e.Arg, e.Body)
 }
 
-func ParseLambda(s *Stream) (Expr, error) {
+func ParseLambda(s *Stream) (*LambdaExpr, error) {
 	err := s.AssertMatch('\\', 'λ')
 	if err != nil {
 		return nil, err
@@ -79,7 +79,7 @@ func (e *ApplicationExpr) String() string {
 	return fmt.Sprintf("(%s %s)", e.Func, e.Arg)
 }
 
-func ParseApplication(s *Stream) (Expr, error) {
+func ParseApplication(s *Stream) (*ApplicationExpr, error) {
 	err := s.AssertMatch('(')
 	if err != nil {
 		return nil, err
@@ -130,7 +130,7 @@ func ParseExpr(s *Stream) (Expr, error) {
 	if r == '(' {
 		return ParseApplication(s)
 	}
-	if isVariableRune(r) {
+	if IsVariableRune(r) {
 		name, err := ParseVariable(s)
 		return &VariableExpr{Name: name}, err
 	}
