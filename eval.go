@@ -120,7 +120,7 @@ trampoline:
 				expr = c.Lambda.Body
 				continue trampoline
 			case *Builtin:
-				return t.Transform(ctx, arg)
+				return c.Transform(ctx, arg)
 			default:
 				return nil, fmt.Errorf("not callable")
 			}

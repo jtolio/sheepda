@@ -93,14 +93,21 @@ func (s *Stream) SwallowWhitespace() error {
 	}
 }
 
-func (s *Stream) AssertMatch(val rune) error {
+func (s *Stream) AssertMatch(vals ...rune) error {
 	r, err := s.Get()
 	if err != nil {
 		return err
 	}
-	if r != val {
+	found := false
+	for _, val := range vals {
+		if r == val {
+			found = true
+			break
+		}
+	}
+	if !found {
 		return fmt.Errorf("unexpected rune. expected %#v, got %#v",
-			string(val), string(r))
+			vals, string(r))
 	}
 	return s.SwallowWhitespace()
 }

@@ -9,7 +9,8 @@ import (
 
 func isVariableRune(ch rune) bool {
 	return !unicode.IsSpace(ch) &&
-		ch != '\\' && ch != '(' && ch != ')' && ch != '.'
+		ch != '\\' && ch != '(' && ch != ')' && ch != '.' &&
+		ch != '=' && ch != 'λ'
 }
 
 func ParseVariable(s *Stream) (name string, err error) {
@@ -43,7 +44,7 @@ type LambdaExpr struct {
 }
 
 func (e *LambdaExpr) String() string {
-	return fmt.Sprintf("\\%s.%s", e.Arg, e.Body)
+	return fmt.Sprintf("λ%s.%s", e.Arg, e.Body)
 }
 
 func ParseLambda(s *Stream) (Expr, error) {
@@ -76,7 +77,7 @@ func (e *ApplicationExpr) String() string {
 }
 
 func ParseApplication(s *Stream) (Expr, error) {
-	err := s.AssertMatch('(')
+	err := s.AssertMatch('(', 'λ')
 	if err != nil {
 		return nil, err
 	}
@@ -120,7 +121,7 @@ func ParseExpr(s *Stream) (Expr, error) {
 		return nil, err
 	}
 
-	if r == '\\' {
+	if r == '\\' || r == 'λ' {
 		return ParseLambda(s)
 	}
 	if r == '(' {
