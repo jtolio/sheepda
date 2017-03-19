@@ -1,3 +1,5 @@
+<img align="right" src="res/photo.png">
+
 # sheepda
 
 A memoizing pure
