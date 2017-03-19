@@ -4,23 +4,31 @@
 
 A memoizing pure
 [lambda calculus](https://en.wikipedia.org/wiki/Lambda_calculus) interpreter
-with only one builtin:
+in Go with only two builtins:
 
  * `PRINT_BYTE` - takes a
-    [church-encoded](https://en.wikipedia.org/wiki/Church_encoding) numeral
+    [Church-encoded](https://en.wikipedia.org/wiki/Church_encoding) numeral
     and writes the corresponding byte to the configured output stream.
+ * `READ_BYTE` - returns a Church-encoded pair value, where the first element
+    is a Church-encoded boolean about whether or not any data was read, and the
+    second element is a Church-encoded numeral representing the byte that was
+    read if successful, and 0 otherwise. The only reason no data was read was
+    if EOF was reached. Other errors stop execution.
+
+When run in `output` mode, `PRINT_BYTE` goes to `stdout`. `READ_BYTE` comes
+from `stdin`. If you use the sheepda library from your own Go program instead,
+you can configure input and output to be any `io.Writer` or `io.Reader`.
 
 ### Usage
 
 ```
 cd $(mktemp -d)
 GOPATH=$(pwd) go get github.com/jtolds/sheepda/...
-cat src/github.com/jtolds/sheepda/interview-probs/{prelude,hello-world}.shp |
-    bin/sheepda output
+bin/sheepda output src/github.com/jtolds/sheepda/interview-probs/{prelude,hello-world}.shp
 ```
 
 ```
-Usage: bin/sheepda [-a] <parsed|output|result>
+Usage: bin/sheepda [-a] <parsed|output|result> <file1.shp> [<file2.shp> ...]
   -a	if provided, skip assignments when pretty-printing in parsed mode
 ```
 
@@ -98,9 +106,9 @@ fizzbuzz = λn.
 Note that the backslash character `\` can be used instead of the lambda
 character `λ`.
 
-### Syntax sugar
+### Parser-level syntax sugar
 
-Two forms of syntax sugar are added:
+Two forms of syntax sugar are understood by the parser.
 
 #### Assignments
 

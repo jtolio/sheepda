@@ -1,3 +1,5 @@
+# This file is essentially the standard library.
+
 # Some combinators for recursion.
 U = λf.(f f)
 Y = (U λh.λf.(f λx.(((h h) f) x)))
@@ -60,7 +62,7 @@ for = λn.λf.(
         λ_. (do2 (f current)
                  (recurse (pred remaining) (succ current) f))))
   n 0 f)
-let = \x.\f.(f x)
+let = λx.λf.(f x)
 
 # output
 print-byte = PRINT_BYTE
@@ -70,6 +72,16 @@ print-list = (Y λrecurse.λl.
         λ_. (do2 (print-byte (car l))
                  (recurse (cdr l)))))
 print-newline = λ_. (print-byte (num 0 1 0))
+
+# input
+read-input = READ_BYTE
+input-eof? = λp.(not (pair-first p))
+input-byte = λp.(pair-second p)
+read-list = (Y λrecurse.λ_.
+    (let (read-input void) λb.
+        (if (input-eof? b)
+            λ_. nil
+            λ_. (cons (input-byte b) (recurse void)))))
 
 # itoa
 zero-byte = (num 0 4 8)
@@ -81,3 +93,14 @@ itoa = λn.(
                λ_. result)
         λ_. (recurse (/ n 10) (cons (+ zero-byte (% n 10)) result))))
   n nil)
+
+# string stuff
+string-whitespace? = λn.
+    (or (or (eq? n (num 0 0 9)) (eq? n (num 0 1 0)))
+        (or (eq? n (num 0 1 3)) (eq? n (num 0 3 2))))
+string-lstrip = (Y λrecurse.λl.
+    (if (nil? l)
+        λ_. l
+        λ_. (if (string-whitespace? (car l))
+                λ_. (recurse (cdr l))
+                λ_. l)))

@@ -1,5 +1,5 @@
 # expects prelude.shp first.
-# run like: cat prelude.shp string-reverse.shp | ./sheepda output
+# run like: echo 'Hello, world!' | ./sheepda output prelude.shp string-reverse.shp
 
 reverse-list = λl.(
   (Y λrecurse. λold.λnew.
@@ -8,22 +8,20 @@ reverse-list = λl.(
         λ_.(recurse (cdr old) (cons (car old) new))))
   l nil)
 
-string = (cons (num 0 7 2)
-    (cons (num 1 0 1)
-    (cons (num 1 0 8)
-    (cons (num 1 0 8)
-    (cons (num 1 1 1)
-    (cons (num 0 4 4)
-    (cons (num 0 3 2)
-    (cons (num 1 1 9)
-    (cons (num 1 1 1)
-    (cons (num 1 1 4)
-    (cons (num 1 0 8)
-    (cons (num 1 0 0)
-    (cons (num 0 3 3) nil)))))))))))))
+string-strip = λl.
+  (string-lstrip (reverse-list (string-lstrip (reverse-list l))))
 
-(do4
-  (print-list string)
-  (print-newline void)
-  (print-list (reverse-list string))
-  (print-newline void))
+string = (string-strip (read-list void))
+
+(do2
+  (do4
+    (print-byte (num 0 7 3))
+    (print-byte (num 0 5 8))
+    (print-list string)
+    (print-newline void))
+
+  (do4
+    (print-byte (num 0 7 9))
+    (print-byte (num 0 5 8))
+    (print-list (reverse-list string))
+    (print-newline void)))

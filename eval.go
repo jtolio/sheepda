@@ -5,15 +5,30 @@ package sheepda
 
 import (
 	"fmt"
-	"io"
 )
 
-type Context struct {
-	out io.Writer
+type Scope struct {
+	Name   string
+	Value  Value
+	Parent *Scope
 }
 
-func NewContext(out io.Writer) *Context {
-	return &Context{out: out}
+func NewScope() *Scope {
+	return nil // deliberate
+}
+
+func (s *Scope) Get(name string) Value {
+	if s == nil {
+		return nil
+	}
+	if s.Name == name {
+		return s.Value
+	}
+	return s.Parent.Get(name)
+}
+
+func (s *Scope) Set(name string, value Value) *Scope {
+	return &Scope{Name: name, Value: value, Parent: s}
 }
 
 type Value interface {

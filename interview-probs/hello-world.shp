@@ -1,5 +1,5 @@
 # expects prelude.shp first.
-# run like: cat prelude.shp hello-world.shp | ./sheepda output
+# run like: ./sheepda output prelude.shp hello-world.shp
 
 (do2
   (print-list
