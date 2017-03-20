@@ -19,19 +19,16 @@ When run in `output` mode, `PRINT_BYTE` goes to `stdout`. `READ_BYTE` comes
 from `stdin`. If you use the sheepda library from your own Go program instead,
 you can configure input and output to be any `io.Writer` or `io.Reader`.
 
-I recently wrote a blog post about solving whiteboard interview problems
-using Sheepda here: http://www.jtolds.com/writing/2017/03/whiteboard-problems-in-pure-lambda-calculus/
+### Links
 
-### Web playground!
-
-Visit the Sheepda-powered Lambda Calculus in-browser web playground here:
-https://jtolds.github.io/sheepda/
+ * [In-browser web playground!](https://jtolds.github.io/sheepda/) (courtesy of [GopherJS](https://github.com/gopherjs/gopherjs))
+ * [Lambda calculus documentation and how to write fizz buzz](http://www.jtolds.com/writing/2017/03/whiteboard-problems-in-pure-lambda-calculus/)
 
 ### Usage
 
 ```
 cd $(mktemp -d)
-GOPATH=$(pwd) go get github.com/jtolds/sheepda/...
+GOPATH=$(pwd) go get github.com/jtolds/sheepda/bin/sheepda
 bin/sheepda output src/github.com/jtolds/sheepda/interview-probs/{prelude,hello-world}.shp
 ```
 
