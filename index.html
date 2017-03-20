@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lambda calculus playground
+  </title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <meta name="author" content="JT Olds" />
+  <style>
+    img {
+      margin-top: 20px;
+    }
+    form {
+      margin-bottom: 10px;
+    }
+    .checkbox {
+      margin-left: 10px;
+      margin-right: 20px;
+      padding-top: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <div class="row">
+      <div class="col-sm-9">
+
+        <h1>Lambda calculus playground!</h1>
+
+        <div class="row">
+          <div class="col-sm-6">
+            <form class="form-inline">
+              <div class="checkbox">
+                <label>
+                  <input type="checkbox" id="field-stdlib-checkbox" checked>
+                  Include
+                  <a href="#" data-toggle="modal" data-target="#modal-stdlib">
+                    Standard Library
+                  </a>
+                </label>
+              </div>
+            </form>
+          </div>
+          <div class="col-sm-6" style="text-align: right;">
+            <form class="form-inline">
+              <button onclick="run(); return false;"
+                 class="btn btn-primary" id="field-run">Run</button>
+              <div class="form-group">
+                <label class="sr-only" for="output-type">Output type</label>
+                <select class="form-control" id="field-output-type">
+                  <option value="output">Program output</option>
+                  <option value="result">Program result value</option>
+                  <option value="parse">Only parse</option>
+                </select>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-sm-12">
+            <textarea class="form-control" rows=20 id="field-code"></textarea>
+          </div>
+        </div>
+        <div class="row" style="margin-top: 10px;">
+          <div class="col-sm-12">
+            <textarea class="form-control" rows=10 id="field-output"></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-3" style="text-align: right;">
+        <a href="https://github.com/jtolds/sheepda">
+          <img src="https://github.com/jtolds/sheepda/raw/master/res/photo.png"
+               class="img-rounded"/>
+        </a>
+        <p style="font-size: 75%; margin-top: 10px;">
+          Powered by <a href="https://github.com/jtolds/sheepda">Sheepda</a>.
+        </p>
+      </div>
+  </div>
+
+  <div class="modal fade" id="modal-stdlib" tabindex="-1" role="dialog" aria-labelledby="modal-stdlib-label">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="modal-stdlib-label">Standard library</h4>
+        </div>
+        <div class="modal-body">
+          <textarea class="form-control" rows=20 id="field-stdlib" disabled># Some combinators for recursion.
+U = λf.(f f)
+Y = λf.(λx.(x x) λx.(f λy.((x x) y)))
+void = λx.(U U)
+
+# we need numbers, so define some numbers
+0 = λf.λx.x
+succ = λn.λf.λx.(f (n f x))
++ = λm.λn.(m succ n)
+* = λm.λn.(n (+ m) 0)
+1 = (succ 0)  2 = (succ 1)  3 = (succ 2)  4 = (succ 3)  5 = (succ 4)
+6 = (succ 5)  7 = (succ 6)  8 = (succ 7)  9 = (succ 8) 10 = (succ 9)
+num = λa.λb.λc. (+ (+ (* (* 10 10) a) (* 10 b)) c)
+
+# logic
+true = λt.λf.t
+false = λt.λf.f
+if = λp.λa.λb.((p a b) p)
+not = λp.λt.λf.(p f t)
+and = λa.λb.(a b false)
+or = λa.λb.(a true b)
+
+# pairs
+make-pair = λx.λy.λt.(t x y)
+pair-first = λp.(p true)
+pair-second = λp.(p false)
+
+# more number stuff now that we have pairs
+zero? = λn.(n λ_.false true)
+pred = λn.
+  (pair-second
+    (n
+     λpair.(make-pair (succ (pair-first pair)) (pair-first pair))
+     (make-pair 0 0)))
+
+- = λm.λn.(n pred m)
+ge? = λm.λn.(zero? (- n m))
+le? = λm.λn.(zero? (- m n))
+eq? = λm.λn.(and (ge? m n) (le? m n))
+/ = (Y λ/.λm.λn.
+  (if (eq? m n)
+      λ_. 1
+      λ_. (if (le? m n)
+              λ_. 0
+              λ_. (+ 1 (/ (- m n) n)))))
+% = λm.λn. (- m (* (/ m n) n))
+
+# lists
+nil = (make-pair false void)
+nil? = λl.(not (pair-first l))
+cons = λe.λl.(make-pair true (make-pair e l))
+car = λl.(pair-first (pair-second l))
+cdr = λl.(pair-second (pair-second l))
+head = car
+tail = cdr
+
+# sequences of steps
+do2 = λ_.λx.x
+do3 = λ_.do2
+do4 = λ_.do3
+for = λn.λf.(
+  (Y λrecurse.λi.
+    (if (eq? i n)
+        λ_. void
+        λ_. (do2 (f i)
+                 (recurse (succ i)))))
+  0)
+let = λx.λf.(f x)
+
+# output
+print-byte = PRINT_BYTE
+print-list = (Y λrecurse.λl.
+    (if (nil? l)
+        λ_. void
+        λ_. (do2 (print-byte (car l))
+                 (recurse (cdr l)))))
+print-newline = λ_. (print-byte (num 0 1 0))
+
+# input
+read-input = READ_BYTE
+input-eof? = λp.(not (pair-first p))
+input-byte = λp.(pair-second p)
+read-list = (Y λrecurse.λ_.
+    (let (read-input void) λb.
+        (if (input-eof? b)
+            λ_. nil
+            λ_. (cons (input-byte b) (recurse void)))))
+
+# itoa
+zero-byte = (num 0 4 8)
+itoa = λn.(
+  (Y λrecurse.λn.λresult.
+    (if (zero? n)
+        λ_. (if (nil? result)
+               λ_. (cons zero-byte nil)
+               λ_. result)
+        λ_. (recurse (/ n 10) (cons (+ zero-byte (% n 10)) result))))
+  n nil)
+
+# string stuff
+string-whitespace? = λn.
+    (or (or (eq? n (num 0 0 9)) (eq? n (num 0 1 0)))
+        (or (eq? n (num 0 1 3)) (eq? n (num 0 3 2))))
+string-lstrip = (Y λrecurse.λl.
+    (if (nil? l)
+        λ_. l
+        λ_. (if (string-whitespace? (car l))
+                λ_. (recurse (cdr l))
+                λ_. l)))</textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+  <script src="sheepdajs.js"></script>
+  <script>
+    function run() {
+      $("#field-run").prop("disabled", true);
+      $("#field-run").text("Running...");
+      setTimeout(function() {
+        var code = $("#field-code").val();
+        if ($("#field-stdlib-checkbox").is(":checked")) {
+          code = $("#field-stdlib").val() + code;
+        }
+        try {
+          var rv = sheepda.eval(code, $("#field-output-type").val());
+          if (rv[1] != "") {
+            $("#field-output").val("Error: " + rv[1]);
+          } else {
+            $("#field-output").val(rv[0]);
+          }
+        } catch(err) {
+          $("#field-output").val("Error: " + err);
+        }
+        $("#field-run").text("Run");
+        $("#field-run").prop("disabled", false);
+      }, 100);
+    }
+  </script>
+</body>
+</html>
