@@ -69,17 +69,18 @@ func Eval(ctx *Context, s *Scope, expr Expr) (
 		if err != nil {
 			return nil, false, err
 		}
+		subCacheable := fnCacheable && argCacheable
 		switch c := fn.(type) {
 		case *Closure:
 			s = c.Scope.Set(c.Lambda.Arg, arg)
 			expr = c.Lambda.Body
 			ca, ok := arg.(*Closure)
-			if !ok || !fnCacheable || !argCacheable {
+			if !ok {
 				v, cacheable, err := Eval(ctx, s, expr)
-				return v, cacheable && argCacheable && fnCacheable, err
+				return v, cacheable && subCacheable, err
 			}
 			if v, ok := c.memoize[ca]; ok {
-				return v, true, nil
+				return v, subCacheable, nil
 			}
 			v, cacheable, err := Eval(ctx, s, expr)
 			if err != nil {
@@ -88,7 +89,7 @@ func Eval(ctx *Context, s *Scope, expr Expr) (
 			if cacheable {
 				c.memoize[ca] = v
 			}
-			return v, cacheable, nil
+			return v, cacheable && subCacheable, nil
 		case *Builtin:
 			return c.Transform(ctx, arg)
 		default:

@@ -1,0 +1,14 @@
+# expects prelude.shp first.
+# run like: ./sheepda output prelude.shp fact.shp
+
+fact = (Y λfact.λn.
+  (if (zero? n)
+      λ_. 1
+      λ_. (* n (fact (pred n)))))
+
+(for (num 1 0 0) \i.
+  (do4
+    (print-list (itoa i))
+    (print-byte (num 0 5 8))
+    (print-list (itoa (fact i)))
+    (print-newline void)))

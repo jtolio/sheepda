@@ -19,6 +19,9 @@ When run in `output` mode, `PRINT_BYTE` goes to `stdout`. `READ_BYTE` comes
 from `stdin`. If you use the sheepda library from your own Go program instead,
 you can configure input and output to be any `io.Writer` or `io.Reader`.
 
+I recently wrote a blog post about solving whiteboard interview problems
+using Sheepda here: http://www.jtolds.com/writing/2017/03/whiteboard-problems-in-pure-lambda-calculus/
+
 ### Usage
 
 ```

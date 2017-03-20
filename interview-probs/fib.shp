@@ -1,0 +1,16 @@
+# expects prelude.shp first.
+# run like: ./sheepda output prelude.shp fib.shp
+
+fib = (Y λfib.λn.
+  (if (zero? n)
+      λ_. 0
+      λ_. (if (zero? (pred n))
+              λ_. 1
+              λ_. (+ (fib (- n 1)) (fib (- n 2))))))
+
+(for (num 1 0 0) \i.
+  (do4
+    (print-list (itoa i))
+    (print-byte (num 0 5 8))
+    (print-list (itoa (fib i)))
+    (print-newline void)))

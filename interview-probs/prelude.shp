@@ -2,14 +2,14 @@
 
 # Some combinators for recursion.
 U = λf.(f f)
-Y = (U λh.λf.(f λx.(((h h) f) x)))
+Y = λf.(λx.(x x) λx.(f λy.((x x) y)))
 void = λx.(U U)
 
 # we need numbers, so define some numbers
 0 = λf.λx.x
 succ = λn.λf.λx.(f (n f x))
-+ = λm.λn.λf.λx.((m succ n) f x)
-* = λm.λn.λx.(m (n x))
++ = λm.λn.(m succ n)
+* = λm.λn.(n (+ m) 0)
 1 = (succ 0)  2 = (succ 1)  3 = (succ 2)  4 = (succ 3)  5 = (succ 4)
 6 = (succ 5)  7 = (succ 6)  8 = (succ 7)  9 = (succ 8) 10 = (succ 9)
 num = λa.λb.λc. (+ (+ (* (* 10 10) a) (* 10 b)) c)
@@ -17,7 +17,7 @@ num = λa.λb.λc. (+ (+ (* (* 10 10) a) (* 10 b)) c)
 # logic
 true = λt.λf.t
 false = λt.λf.f
-if = λp.λa.λb.((p a b) void)
+if = λp.λa.λb.((p a b) p)
 not = λp.λt.λf.(p f t)
 and = λa.λb.(a b false)
 or = λa.λb.(a true b)
@@ -28,20 +28,23 @@ pair-first = λp.(p true)
 pair-second = λp.(p false)
 
 # more number stuff now that we have pairs
-pred = λn.(
-  (λn.λf.λx. (pair-second (n
-    λp.(make-pair (f (pair-first p)) (pair-first p))
-    (make-pair x x))) n)
-  succ 0)
-- = λm.λn.(n pred m)
 zero? = λn.(n λ_.false true)
-eq? = λm.λn.(and (zero? (- m n)) (zero? (- n m)))
+pred = λn.
+  (pair-second
+    (n
+     λpair.(make-pair (succ (pair-first pair)) (pair-first pair))
+     (make-pair 0 0)))
+
+- = λm.λn.(n pred m)
+ge? = λm.λn.(zero? (- n m))
+le? = λm.λn.(zero? (- m n))
+eq? = λm.λn.(and (ge? m n) (le? m n))
 / = (Y λ/.λm.λn.
   (if (eq? m n)
       λ_. 1
-      λ_. (if (zero? (- m n))
-          λ_. 0
-          λ_. (+ 1 (/ (- m n) n)))))
+      λ_. (if (le? m n)
+              λ_. 0
+              λ_. (+ 1 (/ (- m n) n)))))
 % = λm.λn. (- m (* (/ m n) n))
 
 # lists
@@ -50,18 +53,20 @@ nil? = λl.(not (pair-first l))
 cons = λe.λl.(make-pair true (make-pair e l))
 car = λl.(pair-first (pair-second l))
 cdr = λl.(pair-second (pair-second l))
+head = car
+tail = cdr
 
 # sequences of steps
 do2 = λ_.λx.x
 do3 = λ_.do2
 do4 = λ_.do3
 for = λn.λf.(
-  (Y λrecurse.λremaining.λcurrent.λf.
-    (if (zero? remaining)
+  (Y λrecurse.λi.
+    (if (eq? i n)
         λ_. void
-        λ_. (do2 (f current)
-                 (recurse (pred remaining) (succ current) f))))
-  n 0 f)
+        λ_. (do2 (f i)
+                 (recurse (succ i)))))
+  0)
 let = λx.λf.(f x)
 
 # output

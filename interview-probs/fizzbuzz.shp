@@ -30,4 +30,4 @@ fizzbuzz = λn.
                   λ_. (print-list (itoa i))))
       (print-newline nil)))
 
-(fizzbuzz (num 1 0 1))
+(fizzbuzz (num 1 0 0))
