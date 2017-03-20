@@ -244,14 +244,20 @@ string-lstrip = (Y λrecurse.λl.
         "output": $("#field-output-type").val(),
         "code": $("#field-code").val()})));
     }
-    $(function() {
+    function hashchange() {
       if (location.hash != "" && location.hash != "#") {
         var result = JSON.parse(decodeURIComponent(atob(
             location.hash.slice(1))));
         $("#field-stdlib-checkbox").prop("checked", result.stdlib);
         $("#field-output-type").val(result.output);
         $("#field-code").val(result.code);
-      } else {
+      }
+    }
+    $(function() {
+      if (window.hasOwnProperty("onhashchange")) {
+        window.onhashchange = hashchange;
+      }
+      if (location.hash == "") {
         $("#field-code").val([
             "# define the messages",
             "fizzmsg = (cons (num 0 7 0) (cons (num 1 0 5) (cons (num 1 2 2) (cons (num 1 2 2) nil))))",
@@ -274,6 +280,8 @@ string-lstrip = (Y λrecurse.λl.
             "",
             "# run fizzbuzz 20 times",
             "(fizzbuzz (num 0 2 0))"].join("\n"));
+      } else {
+        hashchange();
       }
     });
   </script>
