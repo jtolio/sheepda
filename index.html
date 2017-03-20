@@ -243,12 +243,12 @@ string-lstrip = (Y λrecurse.λl.
         try {
           var rv = sheepda.eval(code, $("#field-output-type").val());
           if (rv[1] != "") {
-            $("#field-output").val("Error: " + rv[1]);
+            $("#field-output").val("Error: " + $.trim(rv[1]));
           } else {
-            $("#field-output").val(rv[0]);
+            $("#field-output").val($.trim(rv[0]));
           }
         } catch(err) {
-          $("#field-output").val("Error: " + err);
+          $("#field-output").val("Error: " + $.trim(err));
         }
         $("#field-run").text("Run");
         $("#field-run").prop("disabled", false);
