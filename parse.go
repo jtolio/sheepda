@@ -11,23 +11,16 @@ import (
 )
 
 var (
-	Lambdas = []rune{
-		'\\', 'Λ', 'λ', 'ᴧ', 'Ⲗ', 'ⲗ', '𝚲', '𝛌', '𝛬', '𝜆', '𝜦', '𝝀',
-		'𝝠', '𝝺', '𝞚', '𝞴'}
-)
-
-func IsLambda(ch rune) bool {
-	for _, lambda := range Lambdas {
-		if ch == lambda {
-			return true
-		}
+	Lambdas = map[rune]bool{
+		'Λ': true, 'λ': true, 'ᴧ': true, 'Ⲗ': true, 'ⲗ': true, '𝚲': true,
+		'𝛌': true, '𝛬': true, '𝜆': true, '𝜦': true, '𝝀': true, '𝝠': true,
+		'𝝺': true, '𝞚': true, '𝞴': true, '\\': true,
 	}
-	return false
-}
+)
 
 func IsVariableRune(ch rune) bool {
 	return !unicode.IsSpace(ch) && ch != '(' && ch != ')' && ch != '.' &&
-		ch != '=' && !IsLambda(ch)
+		ch != '=' && !Lambdas[ch]
 }
 
 func ParseVariable(s *Stream) (name string, err error) {
@@ -65,7 +58,7 @@ func (e *LambdaExpr) String() string {
 }
 
 func ParseLambda(s *Stream) (*LambdaExpr, error) {
-	err := s.AssertMatch(Lambdas...)
+	err := s.AssertMatch(Lambdas)
 	if err != nil {
 		return nil, err
 	}
@@ -73,7 +66,7 @@ func ParseLambda(s *Stream) (*LambdaExpr, error) {
 	if err != nil {
 		return nil, err
 	}
-	err = s.AssertMatch('.')
+	err = s.AssertMatch(map[rune]bool{'.': true})
 	if err != nil {
 		return nil, err
 	}
@@ -94,7 +87,7 @@ func (e *ApplicationExpr) String() string {
 }
 
 func ParseApplication(s *Stream) (*ApplicationExpr, error) {
-	err := s.AssertMatch('(')
+	err := s.AssertMatch(map[rune]bool{'(': true})
 	if err != nil {
 		return nil, err
 	}
@@ -138,7 +131,7 @@ func ParseExpr(s *Stream) (Expr, error) {
 		return nil, err
 	}
 
-	if IsLambda(r) {
+	if Lambdas[r] {
 		return ParseLambda(s)
 	}
 	if r == '(' {
@@ -206,7 +199,7 @@ func Parse(s *Stream) (*ProgramExpr, error) {
 		if !ok {
 			return nil, fmt.Errorf("unparsed code remaining")
 		}
-		err = s.AssertMatch('=')
+		err = s.AssertMatch(map[rune]bool{'=': true})
 		if err != nil {
 			return nil, err
 		}
