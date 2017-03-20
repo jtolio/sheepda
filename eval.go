@@ -49,55 +49,79 @@ func (c *Closure) String() string {
 	return c.Lambda.String()
 }
 
-func Eval(ctx *Context, s *Scope, expr Expr) (
-	val Value, cacheable bool, err error) {
-	switch t := expr.(type) {
-	case *ProgramExpr:
-		return Eval(ctx, s, t.Expr)
-	case *VariableExpr:
-		val := s.Get(t.Name)
-		if val == nil {
-			return nil, false, fmt.Errorf("invalid variable lookup: %s", t.Name)
-		}
-		return val, true, nil
-	case *ApplicationExpr:
-		fn, fnCacheable, err := Eval(ctx, s, t.Func)
-		if err != nil {
-			return nil, false, err
-		}
-		arg, argCacheable, err := Eval(ctx, s, t.Arg)
-		if err != nil {
-			return nil, false, err
-		}
-		subCacheable := fnCacheable && argCacheable
-		switch c := fn.(type) {
-		case *Closure:
-			s = c.Scope.Set(c.Lambda.Arg, arg)
-			expr = c.Lambda.Body
-			ca, ok := arg.(*Closure)
-			if !ok {
-				v, cacheable, err := Eval(ctx, s, expr)
-				return v, cacheable && subCacheable, err
-			}
-			if v, ok := c.memoize[ca]; ok {
-				return v, subCacheable, nil
-			}
-			v, cacheable, err := Eval(ctx, s, expr)
-			if err != nil {
-				return nil, false, err
-			}
-			if cacheable {
-				c.memoize[ca] = v
-			}
-			return v, cacheable && subCacheable, nil
-		case *Builtin:
-			return c.Transform(ctx, arg)
-		default:
-			return nil, false, fmt.Errorf("not callable")
-		}
-	case *LambdaExpr:
-		return NewClosure(s, t), true, nil
-	default:
-		return nil, false, fmt.Errorf("unknown expression: %T", expr)
+type resultMaps []func(Value, bool, error) (Value, bool, error)
+
+func (r resultMaps) apply(v Value, c bool, e error) (Value, bool, error) {
+	for i := len(r) - 1; i >= 0; i-- {
+		v, c, e = r[i](v, c, e)
 	}
+	return v, c, e
+}
+
+func eval(ctx *Context, s *Scope, expr Expr) (
+	val Value, cacheable bool, err error) {
+	var mapper resultMaps
+trampoline:
+	for {
+		switch t := expr.(type) {
+		case *ProgramExpr:
+			expr = t.Expr
+			continue trampoline
+		case *VariableExpr:
+			val := s.Get(t.Name)
+			if val == nil {
+				return mapper.apply(
+					nil, false, fmt.Errorf("invalid variable lookup: %s", t.Name))
+			}
+			return mapper.apply(val, true, nil)
+		case *ApplicationExpr:
+			fn, fnCacheable, err := eval(ctx, s, t.Func)
+			if err != nil {
+				return mapper.apply(nil, false, err)
+			}
+			arg, argCacheable, err := eval(ctx, s, t.Arg)
+			if err != nil {
+				return mapper.apply(nil, false, err)
+			}
+			subCacheable := fnCacheable && argCacheable
+			switch c := fn.(type) {
+			case *Closure:
+				s = c.Scope.Set(c.Lambda.Arg, arg)
+				expr = c.Lambda.Body
+				ca, ok := arg.(*Closure)
+				if !ok {
+					v, cacheable, err := eval(ctx, s, expr)
+					return mapper.apply(v, cacheable && subCacheable, err)
+				}
+				if v, ok := c.memoize[ca]; ok {
+					return mapper.apply(v, subCacheable, nil)
+				}
+				mapper = append(mapper,
+					func(v Value, cacheable bool, err error) (Value, bool, error) {
+						if err != nil {
+							return nil, false, err
+						}
+						if cacheable {
+							c.memoize[ca] = v
+						}
+						return v, cacheable && subCacheable, nil
+					})
+				continue trampoline
+			case *Builtin:
+				return mapper.apply(c.Transform(ctx, arg))
+			default:
+				return mapper.apply(nil, false, fmt.Errorf("not callable"))
+			}
+		case *LambdaExpr:
+			return mapper.apply(NewClosure(s, t), true, nil)
+		default:
+			return mapper.apply(
+				nil, false, fmt.Errorf("unknown expression: %T", expr))
+		}
+	}
+}
+
+func Eval(ctx *Context, s *Scope, expr Expr) (val Value, err error) {
+	val, _, err = eval(ctx, s, expr)
+	return val, err
 }
