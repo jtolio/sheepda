@@ -194,6 +194,7 @@ itoa = λn.(
                λ_. result)
         λ_. (recurse (/ n 10) (cons (+ zero-byte (% n 10)) result))))
   n nil)
+print-num = λn.(print-list (itoa n))
 
 # string stuff
 string-whitespace? = λn.
