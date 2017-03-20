@@ -65,8 +65,7 @@ func main() {
 		out = os.Stdout
 	}
 
-	val, err := sheepda.Eval(
-		sheepda.NewContext(out, os.Stdin), sheepda.NewScopeWithBuiltins(), prog)
+	val, err := sheepda.Eval(sheepda.NewScopeWithBuiltins(out, os.Stdin), prog)
 	if err != nil {
 		_, _ = fmt.Fprintln(os.Stderr, err)
 		os.Exit(-1)

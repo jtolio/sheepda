@@ -29,8 +29,7 @@ func Eval(source string, mode string) (output string, failure string) {
 	}
 
 	var out bytes.Buffer
-	val, err := sheepda.Eval(sheepda.NewContext(&out, nil),
-		sheepda.NewScopeWithBuiltins(), prog)
+	val, err := sheepda.Eval(sheepda.NewScopeWithBuiltins(&out, nil), prog)
 	if err != nil {
 		return "", err.Error()
 	}

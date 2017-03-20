@@ -10,16 +10,19 @@ import (
 	"unicode"
 )
 
+// Stream makes parsing a sequence of runes easier
 type Stream struct {
 	data *bufio.Reader
 	next *rune
 	err  error
 }
 
+// NewStream creates a new stream from an io.Reader
 func NewStream(in io.Reader) *Stream {
 	return &Stream{data: bufio.NewReader(in)}
 }
 
+// EOF returns if the stream has ended.
 func (s *Stream) EOF() bool { return s.err == io.EOF }
 
 func (s *Stream) readRune() (rune, error) {
@@ -62,6 +65,7 @@ func (s *Stream) fillNext() error {
 	return nil
 }
 
+// Peek returns the next rune but does not pop it out of the stream.
 func (s *Stream) Peek() (rune, error) {
 	err := s.fillNext()
 	if err != nil {
@@ -70,16 +74,20 @@ func (s *Stream) Peek() (rune, error) {
 	return *s.next, nil
 }
 
+// Next pops any current rune out of the stream. It won't advance the stream
+// farther though.
 func (s *Stream) Next() {
 	s.next = nil
 }
 
+// Get will advance the stream and return the next rune.
 func (s *Stream) Get() (r rune, err error) {
 	r, err = s.Peek()
 	s.Next()
 	return r, err
 }
 
+// SwallowWhitespace will advance the stream past any whitespace.
 func (s *Stream) SwallowWhitespace() error {
 	for {
 		r, err := s.Peek()
@@ -96,6 +104,8 @@ func (s *Stream) SwallowWhitespace() error {
 	}
 }
 
+// AssertMatch will make sure the current rune is in the set of possible
+// options and error otherwise. Then it will swallow any whitespace.
 func (s *Stream) AssertMatch(options map[rune]bool) error {
 	r, err := s.Get()
 	if err != nil {

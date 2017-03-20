@@ -18,11 +18,14 @@ var (
 	}
 )
 
+// IsVariableRune will return if the rune could be part of a variable name.
 func IsVariableRune(ch rune) bool {
 	return !unicode.IsSpace(ch) && ch != '(' && ch != ')' && ch != '.' &&
 		ch != '=' && !Lambdas[ch]
 }
 
+// ParseVariable will parse a variable out of a stream. It assumes the stream
+// has been advanced to the beginning of the variable.
 func ParseVariable(s *Stream) (name string, err error) {
 	for {
 		ch, err := s.Peek()
@@ -44,10 +47,13 @@ func ParseVariable(s *Stream) (name string, err error) {
 	return name, s.SwallowWhitespace()
 }
 
+// Expr represents a parsed expression. Eval only knows how to deal with
+// LambdaExprs, ApplicationExprs, VariableExprs, and ProgramExprs.
 type Expr interface {
 	String() string
 }
 
+// LambdaExpr represents a function definition.
 type LambdaExpr struct {
 	Arg  string
 	Body Expr
@@ -57,6 +63,8 @@ func (e *LambdaExpr) String() string {
 	return fmt.Sprintf("λ%s.%s", e.Arg, e.Body)
 }
 
+// ParseLambda parses a LambdaExpr out of a stream. It assumes the stream
+// has been advanced to the beginning of the expression.
 func ParseLambda(s *Stream) (*LambdaExpr, error) {
 	err := s.AssertMatch(Lambdas)
 	if err != nil {
@@ -77,6 +85,7 @@ func ParseLambda(s *Stream) (*LambdaExpr, error) {
 	return &LambdaExpr{Arg: arg, Body: body}, nil
 }
 
+// ApplicationExpr represents a function application
 type ApplicationExpr struct {
 	Func Expr
 	Arg  Expr
@@ -86,6 +95,8 @@ func (e *ApplicationExpr) String() string {
 	return fmt.Sprintf("(%s %s)", e.Func, e.Arg)
 }
 
+// ParseApplication will parse a function application. It assumes the stream
+// has been advanced to the beginning of the expression.
 func ParseApplication(s *Stream) (*ApplicationExpr, error) {
 	err := s.AssertMatch(map[rune]bool{'(': true})
 	if err != nil {
@@ -117,6 +128,7 @@ func ParseApplication(s *Stream) (*ApplicationExpr, error) {
 	}
 }
 
+// VariableExpr represents a variable reference.
 type VariableExpr struct {
 	Name string
 }
@@ -125,6 +137,9 @@ func (e *VariableExpr) String() string {
 	return e.Name
 }
 
+// ParseExpr will parse the next full expression. It does not know how to
+// handle assignment syntax sugar, nor does it make sure the stream has been
+// completely processed.
 func ParseExpr(s *Stream) (Expr, error) {
 	r, err := s.Peek()
 	if err != nil {
@@ -150,10 +165,14 @@ type assignment struct {
 	RHS Expr
 }
 
+// ProgramExpr represents a full program.
 type ProgramExpr struct {
 	Expr
 }
 
+// String will regenerate a list of newline-delimited assignments to place at
+// the beginning, unlike ProgramExpr.Expr.String() which is otherwise
+// equivalent.
 func (e *ProgramExpr) String() string {
 	var out bytes.Buffer
 	expr := e.Expr
@@ -175,6 +194,13 @@ func (e *ProgramExpr) String() string {
 	}
 }
 
+// Parse will parse a full lambda calculus program out of the stream. It
+// understands assignment syntax sugar, such as
+//
+//   var = \x.\y.x
+//
+//   (do-something var)
+//
 func Parse(s *Stream) (*ProgramExpr, error) {
 	err := s.SwallowWhitespace()
 	if err != nil {

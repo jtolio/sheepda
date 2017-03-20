@@ -10,22 +10,12 @@ import (
 	"io"
 )
 
-type Context struct {
-	out io.Writer
-
+type byteStream struct {
 	in  *bufio.Reader
 	err error
 }
 
-func NewContext(out io.Writer, in io.Reader) *Context {
-	rv := &Context{out: out}
-	if in != nil {
-		rv.in = bufio.NewReader(in)
-	}
-	return rv
-}
-
-func (c *Context) readByte() (byte, error) {
+func (c *byteStream) readByte() (byte, error) {
 	if c.err != nil {
 		return 0, c.err
 	}
@@ -38,32 +28,32 @@ func (c *Context) readByte() (byte, error) {
 	return b, err
 }
 
-type Byte byte
+type byteVal byte
 
-func (b Byte) String() string {
+func (b byteVal) String() string {
 	return fmt.Sprintf("byte(%x)", string(b))
 }
 
 type Builtin struct {
 	Name      string
-	Transform func(*Context, Value) (val Value, cacheable bool, err error)
+	Transform func(Value) (val Value, cacheable bool, err error)
 }
 
 func (b *Builtin) String() string {
 	return fmt.Sprintf("builtin(%s)", b.Name)
 }
 
-func nextByte(ctx *Context, v Value) (Value, bool, error) {
-	if t, ok := v.(Byte); ok {
-		return Byte(t + 1), true, nil
+func nextByte(v Value) (Value, bool, error) {
+	if t, ok := v.(byteVal); ok {
+		return byteVal(t + 1), true, nil
 	}
 	return nil, false, fmt.Errorf("type %T is not a byte", v)
 }
 
-func printByte(ctx *Context, v Value) (Value, bool, error) {
-	if t, ok := v.(Byte); ok {
-		if ctx.out != nil {
-			_, err := fmt.Fprint(ctx.out, string(t))
+func printByte(out io.Writer, v Value) (Value, bool, error) {
+	if t, ok := v.(byteVal); ok {
+		if out != nil {
+			_, err := fmt.Fprint(out, string(t))
 			return v, false, err
 		}
 		return v, true, nil
@@ -72,57 +62,36 @@ func printByte(ctx *Context, v Value) (Value, bool, error) {
 }
 
 var (
-	trueClosure = NewClosure(NewScope(), &LambdaExpr{
-		Arg: "t",
-		Body: &LambdaExpr{
-			Arg:  "f",
-			Body: &VariableExpr{Name: "t"}}})
-	falseClosure = NewClosure(NewScope(), &LambdaExpr{
-		Arg: "t",
-		Body: &LambdaExpr{
-			Arg:  "f",
-			Body: &VariableExpr{Name: "f"}}})
+	eofValue = ChurchPair(ChurchBool(false), ChurchNumeral(0))
 )
 
-func churchNumeral(val int) Value {
-	var base Expr = &VariableExpr{Name: "x"}
-	for i := 0; i < val; i++ {
-		base = &ApplicationExpr{
-			Func: &VariableExpr{Name: "f"},
-			Arg:  base}
+func readByte(stream *byteStream, v Value) (Value, bool, error) {
+	if stream == nil {
+		return eofValue, true, nil
 	}
-	return NewClosure(NewScope(), &LambdaExpr{
-		Arg: "f",
-		Body: &LambdaExpr{
-			Arg:  "x",
-			Body: base}})
-}
-
-func churchPair(first, second Value) Value {
-	return NewClosure(NewScope().
-		Set("first", first).
-		Set("second", second),
-		&LambdaExpr{
-			Arg: "p",
-			Body: &ApplicationExpr{
-				Func: &ApplicationExpr{
-					Func: &VariableExpr{Name: "p"},
-					Arg:  &VariableExpr{Name: "first"}},
-				Arg: &VariableExpr{Name: "second"}}})
-}
-
-func readByte(ctx *Context, v Value) (Value, bool, error) {
-	b, err := ctx.readByte()
+	b, err := stream.readByte()
 	if err != nil {
 		if err == io.EOF {
-			return churchPair(falseClosure, churchNumeral(0)), true, nil
+			return eofValue, true, nil
 		}
 		return nil, false, err
 	}
-	return churchPair(trueClosure, churchNumeral(int(b))), false, nil
+	return ChurchPair(ChurchBool(true), ChurchNumeral(uint(b))), false, nil
 }
 
-func NewScopeWithBuiltins() *Scope {
+// NewScopeWithBuiltins creates an empty scope (like NewScope) but then defines
+// two functions.
+//
+// PRINT_BYTE takes a Church-encoded numeral, turns it into the corresponding
+// byte, then writes it to out, if out is not nil. The return value is the
+// original numeral.
+//
+// READ_BYTE throws away its argument, then returns a Church-encoded pair where
+// the first element is true if data was read and the second element is a
+// Church-encoded numeral representing the byte that was read. The only reason
+// the first element could be false is due to EOF. Read errors, like other
+// errors with builtins, halt the interpreter.
+func NewScopeWithBuiltins(out io.Writer, in io.Reader) *Scope {
 	printExpr, err := Parse(NewStream(bytes.NewReader([]byte(
 		`\n.(\_.\v.v (print (n next null)) n)`))))
 	if err != nil {
@@ -130,11 +99,17 @@ func NewScopeWithBuiltins() *Scope {
 	}
 	printVal := NewClosure(
 		NewScope().
-			Set("null", Byte(0)).
-			SetBuiltin("print", printByte).
+			Set("null", byteVal(0)).
+			SetBuiltin("print", func(v Value) (Value, bool, error) {
+				return printByte(out, v)
+			}).
 			SetBuiltin("next", nextByte),
 		printExpr.Expr.(*LambdaExpr))
 
+	var instream *byteStream
+	if in != nil {
+		instream = &byteStream{in: bufio.NewReader(in)}
+	}
 	readExpr, err := Parse(NewStream(bytes.NewReader([]byte(
 		`\x.(read x)`))))
 	if err != nil {
@@ -142,7 +117,9 @@ func NewScopeWithBuiltins() *Scope {
 	}
 	readVal := NewClosure(
 		NewScope().
-			SetBuiltin("read", readByte),
+			SetBuiltin("read", func(v Value) (Value, bool, error) {
+				return readByte(instream, v)
+			}),
 		readExpr.Expr.(*LambdaExpr))
 
 	return NewScope().
@@ -150,7 +127,12 @@ func NewScopeWithBuiltins() *Scope {
 		Set("READ_BYTE", readVal)
 }
 
+// SetBuiltin defines a builtin in the scope called name that applies fn to
+// the given value. A result value should be returned. If cacheable is true,
+// then the result of the call may get memoized and the function may never be
+// called again. Cacheable should be false for functions with side-effects (or
+// I/O). If err is non-nil, the interpreter will be halted.
 func (s *Scope) SetBuiltin(name string,
-	t func(*Context, Value) (Value, bool, error)) *Scope {
-	return s.Set(name, &Builtin{Name: name, Transform: t})
+	fn func(Value) (v Value, cacheable bool, err error)) *Scope {
+	return s.Set(name, &Builtin{Name: name, Transform: fn})
 }

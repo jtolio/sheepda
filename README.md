@@ -17,12 +17,14 @@ in Go with only two builtins:
 
 When run in `output` mode, `PRINT_BYTE` goes to `stdout`. `READ_BYTE` comes
 from `stdin`. If you use the sheepda library from your own Go program instead,
-you can configure input and output to be any `io.Writer` or `io.Reader`.
+you can configure input and output to be any `io.Writer` or `io.Reader`, in
+addition to defining your own builtins.
 
 ### Links
 
  * [In-browser web playground!](https://jtolds.github.io/sheepda/) (courtesy of [GopherJS](https://github.com/gopherjs/gopherjs))
  * [Lambda calculus documentation and how to write fizz buzz](http://www.jtolds.com/writing/2017/03/whiteboard-problems-in-pure-lambda-calculus/)
+ * [Go library documentation for sheepda](https://godoc.org/github.com/jtolds/sheepda)
 
 ### Usage
 
