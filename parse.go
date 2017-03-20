@@ -10,10 +10,24 @@ import (
 	"unicode"
 )
 
+var (
+	Lambdas = []rune{
+		'\\', 'Λ', 'λ', 'ᴧ', 'Ⲗ', 'ⲗ', '𝚲', '𝛌', '𝛬', '𝜆', '𝜦', '𝝀',
+		'𝝠', '𝝺', '𝞚', '𝞴'}
+)
+
+func IsLambda(ch rune) bool {
+	for _, lambda := range Lambdas {
+		if ch == lambda {
+			return true
+		}
+	}
+	return false
+}
+
 func IsVariableRune(ch rune) bool {
-	return !unicode.IsSpace(ch) &&
-		ch != '\\' && ch != '(' && ch != ')' && ch != '.' &&
-		ch != '=' && ch != 'λ'
+	return !unicode.IsSpace(ch) && ch != '(' && ch != ')' && ch != '.' &&
+		ch != '=' && !IsLambda(ch)
 }
 
 func ParseVariable(s *Stream) (name string, err error) {
@@ -51,7 +65,7 @@ func (e *LambdaExpr) String() string {
 }
 
 func ParseLambda(s *Stream) (*LambdaExpr, error) {
-	err := s.AssertMatch('\\', 'λ')
+	err := s.AssertMatch(Lambdas...)
 	if err != nil {
 		return nil, err
 	}
@@ -124,7 +138,7 @@ func ParseExpr(s *Stream) (Expr, error) {
 		return nil, err
 	}
 
-	if r == '\\' || r == 'λ' {
+	if IsLambda(r) {
 		return ParseLambda(s)
 	}
 	if r == '(' {
