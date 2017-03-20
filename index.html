@@ -20,6 +20,9 @@
       margin-right: 20px;
       padding-top: 4px;
     }
+    textarea {
+      font-family:Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;
+    }
   </style>
 </head>
 <body>
@@ -27,7 +30,7 @@
   <div class="container">
 
     <div class="row">
-      <div class="col-sm-9">
+      <div class="col-sm-10">
 
         <h1>Lambda calculus playground!</h1>
 
@@ -63,16 +66,36 @@
 
         <div class="row">
           <div class="col-sm-12">
-            <textarea class="form-control" rows=20 id="field-code"></textarea>
+            <textarea class="form-control" rows=20 id="field-code"># define the messages
+fizzmsg = (cons (num 0 7 0) (cons (num 1 0 5) (cons (num 1 2 2) (cons (num 1 2 2) nil))))
+buzzmsg = (cons (num 0 6 6) (cons (num 1 1 7) (cons (num 1 2 2) (cons (num 1 2 2) nil))))
+fizzbuzzmsg = (cons (num 0 7 0) (cons (num 1 0 5) (cons (num 1 2 2) (cons (num 1 2 2)
+    (cons (num 0 9 8) (cons (num 1 1 7) (cons (num 1 2 2) (cons (num 1 2 2) nil))))))))
+
+# fizzbuzz
+fizzbuzz = λn.
+  (for n λi.
+    (do2
+      (if (zero? (% i 3))
+          λ_. (if (zero? (% i 5))
+                  λ_. (print-list fizzbuzzmsg)
+                  λ_. (print-list fizzmsg))
+          λ_. (if (zero? (% i 5))
+                  λ_. (print-list buzzmsg)
+                  λ_. (print-list (itoa i))))
+      (print-newline nil)))
+
+# run fizzbuzz 20 times
+(fizzbuzz (num 0 2 0))</textarea>
           </div>
         </div>
         <div class="row" style="margin-top: 10px;">
           <div class="col-sm-12">
-            <textarea class="form-control" rows=10 id="field-output"></textarea>
+            <textarea class="form-control" rows=10 id="field-output" readonly="readonly"></textarea>
           </div>
         </div>
       </div>
-      <div class="col-sm-3" style="text-align: right;">
+      <div class="col-sm-2" style="text-align: right;">
         <a href="https://github.com/jtolds/sheepda">
           <img src="https://github.com/jtolds/sheepda/raw/master/res/photo.png"
                class="img-rounded"/>
@@ -91,7 +114,7 @@
           <h4 class="modal-title" id="modal-stdlib-label">Standard library</h4>
         </div>
         <div class="modal-body">
-          <textarea class="form-control" rows=20 id="field-stdlib" disabled># Some combinators for recursion.
+          <textarea class="form-control" rows=20 id="field-stdlib" readonly="readonly"># Some combinators for recursion.
 U = λf.(f f)
 Y = λf.(λx.(x x) λx.(f λy.((x x) y)))
 void = λx.(U U)
