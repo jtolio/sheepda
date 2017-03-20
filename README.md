@@ -22,6 +22,11 @@ you can configure input and output to be any `io.Writer` or `io.Reader`.
 I recently wrote a blog post about solving whiteboard interview problems
 using Sheepda here: http://www.jtolds.com/writing/2017/03/whiteboard-problems-in-pure-lambda-calculus/
 
+### Web playground!
+
+Visit the Sheepda-powered Lambda Calculus in-browser web playground here:
+https://jtolds.github.io/sheepda/
+
 ### Usage
 
 ```
