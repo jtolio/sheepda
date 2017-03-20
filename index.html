@@ -86,21 +86,21 @@
                class="img-rounded"/>
         </a>
         <p style="font-size: 75%; margin-top: 10px;">
-          Read the <a href="http://www.jtolds.com/writing/2017/03/whiteboard-problems-in-pure-lambda-calculus/">Documentation</a><br/>
-          Powered by <a href="https://github.com/jtolds/sheepda">Sheepda</a>.
+          Powered by <a href="https://github.com/jtolds/sheepda">Sheepda</a><br/>
+          Read the <a href="http://www.jtolds.com/writing/2017/03/whiteboard-problems-in-pure-lambda-calculus/">documentation</a>
         </p>
       </div>
   </div>
 
   <div class="modal fade" id="modal-stdlib" tabindex="-1" role="dialog" aria-labelledby="modal-stdlib-label">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-lg" role="document">
       <div class="modal-content">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
           <h4 class="modal-title" id="modal-stdlib-label">Standard library</h4>
         </div>
         <div class="modal-body">
-          <textarea class="form-control" rows=20 id="field-stdlib" readonly="readonly"># Some combinators for recursion.
+          <textarea class="form-control" rows=28 id="field-stdlib" readonly="readonly"># Some combinators for recursion.
 U = λf.(f f)
 Y = λf.(λx.(x x) λx.(f λy.((x x) y)))
 void = λx.(U U)
