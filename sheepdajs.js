@@ -17958,25 +17958,23 @@ $packages["bufio"] = (function() {
 	return $pkg;
 })();
 $packages["github.com/jtolds/sheepda"] = (function() {
-	var $pkg = {}, $init, bufio, bytes, fmt, io, unicode, Context, Byte, Builtin, Scope, Value, Closure, resultMaps, Expr, LambdaExpr, ApplicationExpr, VariableExpr, assignment, ProgramExpr, Stream, ptrType, sliceType, sliceType$1, ptrType$1, ptrType$2, ptrType$3, ptrType$4, ptrType$5, ptrType$6, ptrType$7, arrayType, arrayType$1, sliceType$2, ptrType$8, mapType, ptrType$9, funcType, mapType$1, funcType$1, ptrType$10, trueClosure, falseClosure, NewContext, nextByte, printByte, churchNumeral, churchPair, readByte, NewScopeWithBuiltins, NewScope, NewClosure, eval$1, Eval, IsVariableRune, ParseVariable, ParseLambda, ParseApplication, ParseExpr, Parse, NewStream;
+	var $pkg = {}, $init, bufio, bytes, fmt, io, unicode, byteStream, byteVal, Builtin, Scope, Value, Closure, resultMaps, Expr, LambdaExpr, ApplicationExpr, VariableExpr, assignment, ProgramExpr, Stream, ptrType, sliceType, ptrType$1, sliceType$1, ptrType$2, ptrType$3, ptrType$4, ptrType$5, ptrType$6, ptrType$7, ptrType$8, arrayType, arrayType$1, sliceType$2, ptrType$9, mapType, funcType, mapType$1, funcType$1, ptrType$10, eofValue, churchTrue, churchFalse, nextByte, printByte, readByte, NewScopeWithBuiltins, ChurchNumeral, ChurchPair, ChurchBool, NewScope, NewClosure, eval$1, Eval, IsVariableRune, ParseVariable, ParseLambda, ParseSubexpression, ParseExpr, Parse, NewStream;
 	bufio = $packages["bufio"];
 	bytes = $packages["bytes"];
 	fmt = $packages["fmt"];
 	io = $packages["io"];
 	unicode = $packages["unicode"];
-	Context = $pkg.Context = $newType(0, $kindStruct, "sheepda.Context", true, "github.com/jtolds/sheepda", true, function(out_, in$1_, err_) {
+	byteStream = $pkg.byteStream = $newType(0, $kindStruct, "sheepda.byteStream", true, "github.com/jtolds/sheepda", false, function(in$0_, err_) {
 		this.$val = this;
 		if (arguments.length === 0) {
-			this.out = $ifaceNil;
-			this.in$1 = ptrType.nil;
+			this.in$0 = ptrType.nil;
 			this.err = $ifaceNil;
 			return;
 		}
-		this.out = out_;
-		this.in$1 = in$1_;
+		this.in$0 = in$0_;
 		this.err = err_;
 	});
-	Byte = $pkg.Byte = $newType(1, $kindUint8, "sheepda.Byte", true, "github.com/jtolds/sheepda", true, null);
+	byteVal = $pkg.byteVal = $newType(1, $kindUint8, "sheepda.byteVal", true, "github.com/jtolds/sheepda", false, null);
 	Builtin = $pkg.Builtin = $newType(0, $kindStruct, "sheepda.Builtin", true, "github.com/jtolds/sheepda", true, function(Name_, Transform_) {
 		this.$val = this;
 		if (arguments.length === 0) {
@@ -17992,7 +17990,7 @@ $packages["github.com/jtolds/sheepda"] = (function() {
 		if (arguments.length === 0) {
 			this.Name = "";
 			this.Value = $ifaceNil;
-			this.Parent = ptrType$2.nil;
+			this.Parent = ptrType$3.nil;
 			return;
 		}
 		this.Name = Name_;
@@ -18003,8 +18001,8 @@ $packages["github.com/jtolds/sheepda"] = (function() {
 	Closure = $pkg.Closure = $newType(0, $kindStruct, "sheepda.Closure", true, "github.com/jtolds/sheepda", true, function(Scope_, Lambda_, memoize_) {
 		this.$val = this;
 		if (arguments.length === 0) {
-			this.Scope = ptrType$2.nil;
-			this.Lambda = ptrType$1.nil;
+			this.Scope = ptrType$3.nil;
+			this.Lambda = ptrType$2.nil;
 			this.memoize = false;
 			return;
 		}
@@ -18064,7 +18062,7 @@ $packages["github.com/jtolds/sheepda"] = (function() {
 		this.$val = this;
 		if (arguments.length === 0) {
 			this.data = ptrType.nil;
-			this.next = ptrType$8.nil;
+			this.next = ptrType$9.nil;
 			this.err = $ifaceNil;
 			return;
 		}
@@ -18074,34 +18072,25 @@ $packages["github.com/jtolds/sheepda"] = (function() {
 	});
 	ptrType = $ptrType(bufio.Reader);
 	sliceType = $sliceType($emptyInterface);
+	ptrType$1 = $ptrType(byteStream);
 	sliceType$1 = $sliceType($Uint8);
-	ptrType$1 = $ptrType(LambdaExpr);
-	ptrType$2 = $ptrType(Scope);
-	ptrType$3 = $ptrType(Closure);
-	ptrType$4 = $ptrType(ProgramExpr);
-	ptrType$5 = $ptrType(VariableExpr);
-	ptrType$6 = $ptrType(ApplicationExpr);
-	ptrType$7 = $ptrType(Builtin);
+	ptrType$2 = $ptrType(LambdaExpr);
+	ptrType$3 = $ptrType(Scope);
+	ptrType$4 = $ptrType(Closure);
+	ptrType$5 = $ptrType(ProgramExpr);
+	ptrType$6 = $ptrType(VariableExpr);
+	ptrType$7 = $ptrType(ApplicationExpr);
+	ptrType$8 = $ptrType(Builtin);
 	arrayType = $arrayType($Uint8, 4);
 	arrayType$1 = $arrayType($Uint8, 64);
 	sliceType$2 = $sliceType(assignment);
-	ptrType$8 = $ptrType($Int32);
+	ptrType$9 = $ptrType($Int32);
 	mapType = $mapType($Int32, $Bool);
-	ptrType$9 = $ptrType(Context);
-	funcType = $funcType([ptrType$9, Value], [Value, $Bool, $error], false);
-	mapType$1 = $mapType(ptrType$3, Value);
+	funcType = $funcType([Value], [Value, $Bool, $error], false);
+	mapType$1 = $mapType(ptrType$4, Value);
 	funcType$1 = $funcType([Value, $Bool, $error], [Value, $Bool, $error], false);
 	ptrType$10 = $ptrType(Stream);
-	NewContext = function(out, in$1) {
-		var $ptr, in$1, out, rv;
-		rv = new Context.ptr(out, ptrType.nil, $ifaceNil);
-		if (!($interfaceIsEqual(in$1, $ifaceNil))) {
-			rv.in$1 = bufio.NewReader(in$1);
-		}
-		return rv;
-	};
-	$pkg.NewContext = NewContext;
-	Context.ptr.prototype.readByte = function() {
+	byteStream.ptr.prototype.readByte = function() {
 		var $ptr, _r, _tuple, b, c, err, $s, $r;
 		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _r = $f._r; _tuple = $f._tuple; b = $f.b; c = $f.c; err = $f.err; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		c = this;
@@ -18109,31 +18098,31 @@ $packages["github.com/jtolds/sheepda"] = (function() {
 			$s = -1; return [0, c.err];
 			return [0, c.err];
 		}
-		if (c.in$1 === ptrType.nil) {
+		if (c.in$0 === ptrType.nil) {
 			c.err = io.EOF;
 			$s = -1; return [0, io.EOF];
 			return [0, io.EOF];
 		}
-		_r = c.in$1.ReadByte(); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		_r = c.in$0.ReadByte(); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
 		_tuple = _r;
 		b = _tuple[0];
 		err = _tuple[1];
 		c.err = err;
 		$s = -1; return [b, err];
 		return [b, err];
-		/* */ } return; } if ($f === undefined) { $f = { $blk: Context.ptr.prototype.readByte }; } $f.$ptr = $ptr; $f._r = _r; $f._tuple = _tuple; $f.b = b; $f.c = c; $f.err = err; $f.$s = $s; $f.$r = $r; return $f;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: byteStream.ptr.prototype.readByte }; } $f.$ptr = $ptr; $f._r = _r; $f._tuple = _tuple; $f.b = b; $f.c = c; $f.err = err; $f.$s = $s; $f.$r = $r; return $f;
 	};
-	Context.prototype.readByte = function() { return this.$val.readByte(); };
-	Byte.prototype.String = function() {
+	byteStream.prototype.readByte = function() { return this.$val.readByte(); };
+	byteVal.prototype.String = function() {
 		var $ptr, _r, b, $s, $r;
 		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _r = $f._r; b = $f.b; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		b = this.$val;
 		_r = fmt.Sprintf("byte(%x)", new sliceType([new $String($encodeRune(b))])); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
 		$s = -1; return _r;
 		return _r;
-		/* */ } return; } if ($f === undefined) { $f = { $blk: Byte.prototype.String }; } $f.$ptr = $ptr; $f._r = _r; $f.b = b; $f.$s = $s; $f.$r = $r; return $f;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: byteVal.prototype.String }; } $f.$ptr = $ptr; $f._r = _r; $f.b = b; $f.$s = $s; $f.$r = $r; return $f;
 	};
-	$ptrType(Byte).prototype.String = function() { return new Byte(this.$get()).String(); };
+	$ptrType(byteVal).prototype.String = function() { return new byteVal(this.$get()).String(); };
 	Builtin.ptr.prototype.String = function() {
 		var $ptr, _r, b, $s, $r;
 		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _r = $f._r; b = $f.b; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
@@ -18144,34 +18133,34 @@ $packages["github.com/jtolds/sheepda"] = (function() {
 		/* */ } return; } if ($f === undefined) { $f = { $blk: Builtin.ptr.prototype.String }; } $f.$ptr = $ptr; $f._r = _r; $f.b = b; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	Builtin.prototype.String = function() { return this.$val.String(); };
-	nextByte = function(ctx, v) {
-		var $ptr, _r, _tuple, ctx, ok, t, v, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _r = $f._r; _tuple = $f._tuple; ctx = $f.ctx; ok = $f.ok; t = $f.t; v = $f.v; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
-		_tuple = $assertType(v, Byte, true);
+	nextByte = function(v) {
+		var $ptr, _r, _tuple, ok, t, v, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _r = $f._r; _tuple = $f._tuple; ok = $f.ok; t = $f.t; v = $f.v; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		_tuple = $assertType(v, byteVal, true);
 		t = _tuple[0];
 		ok = _tuple[1];
 		if (ok) {
-			$s = -1; return [new Byte((t + 1 << 24 >>> 24)), true, $ifaceNil];
-			return [new Byte((t + 1 << 24 >>> 24)), true, $ifaceNil];
+			$s = -1; return [new byteVal((t + 1 << 24 >>> 24)), true, $ifaceNil];
+			return [new byteVal((t + 1 << 24 >>> 24)), true, $ifaceNil];
 		}
 		_r = fmt.Errorf("type %T is not a byte", new sliceType([v])); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
 		$s = -1; return [$ifaceNil, false, _r];
 		return [$ifaceNil, false, _r];
-		/* */ } return; } if ($f === undefined) { $f = { $blk: nextByte }; } $f.$ptr = $ptr; $f._r = _r; $f._tuple = _tuple; $f.ctx = ctx; $f.ok = ok; $f.t = t; $f.v = v; $f.$s = $s; $f.$r = $r; return $f;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: nextByte }; } $f.$ptr = $ptr; $f._r = _r; $f._tuple = _tuple; $f.ok = ok; $f.t = t; $f.v = v; $f.$s = $s; $f.$r = $r; return $f;
 	};
-	printByte = function(ctx, v) {
-		var $ptr, _r, _r$1, _tuple, _tuple$1, ctx, err, ok, t, v, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _r = $f._r; _r$1 = $f._r$1; _tuple = $f._tuple; _tuple$1 = $f._tuple$1; ctx = $f.ctx; err = $f.err; ok = $f.ok; t = $f.t; v = $f.v; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
-		_tuple = $assertType(v, Byte, true);
+	printByte = function(out, v) {
+		var $ptr, _r, _r$1, _tuple, _tuple$1, err, ok, out, t, v, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _r = $f._r; _r$1 = $f._r$1; _tuple = $f._tuple; _tuple$1 = $f._tuple$1; err = $f.err; ok = $f.ok; out = $f.out; t = $f.t; v = $f.v; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		_tuple = $assertType(v, byteVal, true);
 		t = _tuple[0];
 		ok = _tuple[1];
 		/* */ if (ok) { $s = 1; continue; }
 		/* */ $s = 2; continue;
 		/* if (ok) { */ case 1:
-			/* */ if (!($interfaceIsEqual(ctx.out, $ifaceNil))) { $s = 3; continue; }
+			/* */ if (!($interfaceIsEqual(out, $ifaceNil))) { $s = 3; continue; }
 			/* */ $s = 4; continue;
-			/* if (!($interfaceIsEqual(ctx.out, $ifaceNil))) { */ case 3:
-				_r = fmt.Fprint(ctx.out, new sliceType([new $String($encodeRune(t))])); /* */ $s = 5; case 5: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+			/* if (!($interfaceIsEqual(out, $ifaceNil))) { */ case 3:
+				_r = fmt.Fprint(out, new sliceType([new $String($encodeRune(t))])); /* */ $s = 5; case 5: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
 				_tuple$1 = _r;
 				err = _tuple$1[1];
 				$s = -1; return [v, false, err];
@@ -18183,45 +18172,36 @@ $packages["github.com/jtolds/sheepda"] = (function() {
 		_r$1 = fmt.Errorf("type %T is not a byte", new sliceType([v])); /* */ $s = 6; case 6: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
 		$s = -1; return [$ifaceNil, false, _r$1];
 		return [$ifaceNil, false, _r$1];
-		/* */ } return; } if ($f === undefined) { $f = { $blk: printByte }; } $f.$ptr = $ptr; $f._r = _r; $f._r$1 = _r$1; $f._tuple = _tuple; $f._tuple$1 = _tuple$1; $f.ctx = ctx; $f.err = err; $f.ok = ok; $f.t = t; $f.v = v; $f.$s = $s; $f.$r = $r; return $f;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: printByte }; } $f.$ptr = $ptr; $f._r = _r; $f._r$1 = _r$1; $f._tuple = _tuple; $f._tuple$1 = _tuple$1; $f.err = err; $f.ok = ok; $f.out = out; $f.t = t; $f.v = v; $f.$s = $s; $f.$r = $r; return $f;
 	};
-	churchNumeral = function(val) {
-		var $ptr, base, i, val;
-		base = new VariableExpr.ptr("x");
-		i = 0;
-		while (true) {
-			if (!(i < val)) { break; }
-			base = new ApplicationExpr.ptr(new VariableExpr.ptr("f"), base);
-			i = i + (1) >> 0;
+	readByte = function(stream, v) {
+		var $ptr, _r, _tuple, b, err, stream, v, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _r = $f._r; _tuple = $f._tuple; b = $f.b; err = $f.err; stream = $f.stream; v = $f.v; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		if (stream === ptrType$1.nil) {
+			$s = -1; return [eofValue, true, $ifaceNil];
+			return [eofValue, true, $ifaceNil];
 		}
-		return NewClosure(NewScope(), new LambdaExpr.ptr("f", new LambdaExpr.ptr("x", base)));
-	};
-	churchPair = function(first, second) {
-		var $ptr, first, second;
-		return NewClosure(NewScope().Set("first", first).Set("second", second), new LambdaExpr.ptr("p", new ApplicationExpr.ptr(new ApplicationExpr.ptr(new VariableExpr.ptr("p"), new VariableExpr.ptr("first")), new VariableExpr.ptr("second"))));
-	};
-	readByte = function(ctx, v) {
-		var $ptr, _r, _tuple, b, ctx, err, v, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _r = $f._r; _tuple = $f._tuple; b = $f.b; ctx = $f.ctx; err = $f.err; v = $f.v; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
-		_r = ctx.readByte(); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		_r = stream.readByte(); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
 		_tuple = _r;
 		b = _tuple[0];
 		err = _tuple[1];
 		if (!($interfaceIsEqual(err, $ifaceNil))) {
 			if ($interfaceIsEqual(err, io.EOF)) {
-				$s = -1; return [churchPair(falseClosure, churchNumeral(0)), true, $ifaceNil];
-				return [churchPair(falseClosure, churchNumeral(0)), true, $ifaceNil];
+				$s = -1; return [eofValue, true, $ifaceNil];
+				return [eofValue, true, $ifaceNil];
 			}
 			$s = -1; return [$ifaceNil, false, err];
 			return [$ifaceNil, false, err];
 		}
-		$s = -1; return [churchPair(trueClosure, churchNumeral((b >> 0))), false, $ifaceNil];
-		return [churchPair(trueClosure, churchNumeral((b >> 0))), false, $ifaceNil];
-		/* */ } return; } if ($f === undefined) { $f = { $blk: readByte }; } $f.$ptr = $ptr; $f._r = _r; $f._tuple = _tuple; $f.b = b; $f.ctx = ctx; $f.err = err; $f.v = v; $f.$s = $s; $f.$r = $r; return $f;
+		$s = -1; return [ChurchPair(ChurchBool(true), ChurchNumeral((b >>> 0))), false, $ifaceNil];
+		return [ChurchPair(ChurchBool(true), ChurchNumeral((b >>> 0))), false, $ifaceNil];
+		/* */ } return; } if ($f === undefined) { $f = { $blk: readByte }; } $f.$ptr = $ptr; $f._r = _r; $f._tuple = _tuple; $f.b = b; $f.err = err; $f.stream = stream; $f.v = v; $f.$s = $s; $f.$r = $r; return $f;
 	};
-	NewScopeWithBuiltins = function() {
-		var $ptr, _r, _r$1, _tuple, _tuple$1, err, printExpr, printVal, readExpr, readVal, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _r = $f._r; _r$1 = $f._r$1; _tuple = $f._tuple; _tuple$1 = $f._tuple$1; err = $f.err; printExpr = $f.printExpr; printVal = $f.printVal; readExpr = $f.readExpr; readVal = $f.readVal; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+	NewScopeWithBuiltins = function(out, in$1) {
+		var $ptr, _r, _r$1, _tuple, _tuple$1, err, in$1, instream, out, printExpr, printVal, readExpr, readVal, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _r = $f._r; _r$1 = $f._r$1; _tuple = $f._tuple; _tuple$1 = $f._tuple$1; err = $f.err; in$1 = $f.in$1; instream = $f.instream; out = $f.out; printExpr = $f.printExpr; printVal = $f.printVal; readExpr = $f.readExpr; readVal = $f.readVal; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		instream = [instream];
+		out = [out];
 		_r = Parse(NewStream(bytes.NewReader(new sliceType$1($stringToBytes("\\n.(\\_.\\v.v (print (n next null)) n)"))))); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
 		_tuple = _r;
 		printExpr = _tuple[0];
@@ -18229,7 +18209,18 @@ $packages["github.com/jtolds/sheepda"] = (function() {
 		if (!($interfaceIsEqual(err, $ifaceNil))) {
 			$panic(err);
 		}
-		printVal = NewClosure(NewScope().Set("null", new Byte(0)).SetBuiltin("print", printByte).SetBuiltin("next", nextByte), $assertType(printExpr.Expr, ptrType$1));
+		printVal = NewClosure(NewScope().Set("null", new byteVal(0)).SetBuiltin("print", (function(instream, out) { return function $b(v) {
+			var $ptr, _r$1, v, $s, $r;
+			/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _r$1 = $f._r$1; v = $f.v; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+			_r$1 = printByte(out[0], v); /* */ $s = 1; case 1: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
+			$s = -1; return _r$1;
+			return _r$1;
+			/* */ } return; } if ($f === undefined) { $f = { $blk: $b }; } $f.$ptr = $ptr; $f._r$1 = _r$1; $f.v = v; $f.$s = $s; $f.$r = $r; return $f;
+		}; })(instream, out)).SetBuiltin("next", nextByte), $assertType(printExpr.Expr, ptrType$2));
+		instream[0] = ptrType$1.nil;
+		if (!($interfaceIsEqual(in$1, $ifaceNil))) {
+			instream[0] = new byteStream.ptr(bufio.NewReader(in$1), $ifaceNil);
+		}
 		_r$1 = Parse(NewStream(bytes.NewReader(new sliceType$1($stringToBytes("\\x.(read x)"))))); /* */ $s = 2; case 2: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
 		_tuple$1 = _r$1;
 		readExpr = _tuple$1[0];
@@ -18237,27 +18228,59 @@ $packages["github.com/jtolds/sheepda"] = (function() {
 		if (!($interfaceIsEqual(err, $ifaceNil))) {
 			$panic(err);
 		}
-		readVal = NewClosure(NewScope().SetBuiltin("read", readByte), $assertType(readExpr.Expr, ptrType$1));
+		readVal = NewClosure(NewScope().SetBuiltin("read", (function(instream, out) { return function $b(v) {
+			var $ptr, _r$2, v, $s, $r;
+			/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _r$2 = $f._r$2; v = $f.v; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+			_r$2 = readByte(instream[0], v); /* */ $s = 1; case 1: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
+			$s = -1; return _r$2;
+			return _r$2;
+			/* */ } return; } if ($f === undefined) { $f = { $blk: $b }; } $f.$ptr = $ptr; $f._r$2 = _r$2; $f.v = v; $f.$s = $s; $f.$r = $r; return $f;
+		}; })(instream, out)), $assertType(readExpr.Expr, ptrType$2));
 		$s = -1; return NewScope().Set("PRINT_BYTE", printVal).Set("READ_BYTE", readVal);
 		return NewScope().Set("PRINT_BYTE", printVal).Set("READ_BYTE", readVal);
-		/* */ } return; } if ($f === undefined) { $f = { $blk: NewScopeWithBuiltins }; } $f.$ptr = $ptr; $f._r = _r; $f._r$1 = _r$1; $f._tuple = _tuple; $f._tuple$1 = _tuple$1; $f.err = err; $f.printExpr = printExpr; $f.printVal = printVal; $f.readExpr = readExpr; $f.readVal = readVal; $f.$s = $s; $f.$r = $r; return $f;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: NewScopeWithBuiltins }; } $f.$ptr = $ptr; $f._r = _r; $f._r$1 = _r$1; $f._tuple = _tuple; $f._tuple$1 = _tuple$1; $f.err = err; $f.in$1 = in$1; $f.instream = instream; $f.out = out; $f.printExpr = printExpr; $f.printVal = printVal; $f.readExpr = readExpr; $f.readVal = readVal; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	$pkg.NewScopeWithBuiltins = NewScopeWithBuiltins;
-	Scope.ptr.prototype.SetBuiltin = function(name, t) {
-		var $ptr, name, s, t;
+	Scope.ptr.prototype.SetBuiltin = function(name, fn) {
+		var $ptr, fn, name, s;
 		s = this;
-		return s.Set(name, new Builtin.ptr(name, t));
+		return s.Set(name, new Builtin.ptr(name, fn));
 	};
-	Scope.prototype.SetBuiltin = function(name, t) { return this.$val.SetBuiltin(name, t); };
+	Scope.prototype.SetBuiltin = function(name, fn) { return this.$val.SetBuiltin(name, fn); };
+	ChurchNumeral = function(val) {
+		var $ptr, base, i, val;
+		base = new VariableExpr.ptr("x");
+		i = 0;
+		while (true) {
+			if (!(i < val)) { break; }
+			base = new ApplicationExpr.ptr(new VariableExpr.ptr("f"), base);
+			i = i + (1) >>> 0;
+		}
+		return NewClosure(NewScope(), new LambdaExpr.ptr("f", new LambdaExpr.ptr("x", base)));
+	};
+	$pkg.ChurchNumeral = ChurchNumeral;
+	ChurchPair = function(first, second) {
+		var $ptr, first, second;
+		return NewClosure(NewScope().Set("first", first).Set("second", second), new LambdaExpr.ptr("p", new ApplicationExpr.ptr(new ApplicationExpr.ptr(new VariableExpr.ptr("p"), new VariableExpr.ptr("first")), new VariableExpr.ptr("second"))));
+	};
+	$pkg.ChurchPair = ChurchPair;
+	ChurchBool = function(val) {
+		var $ptr, val;
+		if (val) {
+			return churchTrue;
+		}
+		return churchFalse;
+	};
+	$pkg.ChurchBool = ChurchBool;
 	NewScope = function() {
 		var $ptr;
-		return ptrType$2.nil;
+		return ptrType$3.nil;
 	};
 	$pkg.NewScope = NewScope;
 	Scope.ptr.prototype.Get = function(name) {
 		var $ptr, name, s;
 		s = this;
-		if (s === ptrType$2.nil) {
+		if (s === ptrType$3.nil) {
 			return $ifaceNil;
 		}
 		if (s.Name === name) {
@@ -18274,7 +18297,7 @@ $packages["github.com/jtolds/sheepda"] = (function() {
 	Scope.prototype.Set = function(name, value) { return this.$val.Set(name, value); };
 	NewClosure = function(s, l) {
 		var $ptr, l, s;
-		return new Closure.ptr(s, l, $makeMap(ptrType$3.keyFor, []));
+		return new Closure.ptr(s, l, $makeMap(ptrType$4.keyFor, []));
 	};
 	$pkg.NewClosure = NewClosure;
 	Closure.ptr.prototype.String = function() {
@@ -18306,9 +18329,9 @@ $packages["github.com/jtolds/sheepda"] = (function() {
 		/* */ } return; } if ($f === undefined) { $f = { $blk: resultMaps.prototype.apply }; } $f.$ptr = $ptr; $f._r = _r; $f._tuple = _tuple; $f.c = c; $f.e = e; $f.i = i; $f.r = r; $f.v = v; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	$ptrType(resultMaps).prototype.apply = function(v, c, e) { return this.$get().apply(v, c, e); };
-	eval$1 = function(ctx, s, expr) {
-		var $ptr, _arg, _arg$1, _arg$2, _arg$3, _arg$4, _arg$5, _entry, _r, _r$1, _r$10, _r$11, _r$12, _r$13, _r$14, _r$15, _r$16, _r$2, _r$3, _r$4, _r$5, _r$6, _r$7, _r$8, _r$9, _ref, _ref$1, _tuple, _tuple$1, _tuple$10, _tuple$11, _tuple$12, _tuple$13, _tuple$14, _tuple$15, _tuple$2, _tuple$3, _tuple$4, _tuple$5, _tuple$6, _tuple$7, _tuple$8, _tuple$9, arg, argCacheable, c, c$1, c$2, ca, cacheable, cacheable$1, ctx, err, err$1, err$2, expr, fn, fnCacheable, mapper, ok, ok$1, s, subCacheable, t, t$1, t$2, t$3, t$4, v, v$1, val, val$1, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _arg = $f._arg; _arg$1 = $f._arg$1; _arg$2 = $f._arg$2; _arg$3 = $f._arg$3; _arg$4 = $f._arg$4; _arg$5 = $f._arg$5; _entry = $f._entry; _r = $f._r; _r$1 = $f._r$1; _r$10 = $f._r$10; _r$11 = $f._r$11; _r$12 = $f._r$12; _r$13 = $f._r$13; _r$14 = $f._r$14; _r$15 = $f._r$15; _r$16 = $f._r$16; _r$2 = $f._r$2; _r$3 = $f._r$3; _r$4 = $f._r$4; _r$5 = $f._r$5; _r$6 = $f._r$6; _r$7 = $f._r$7; _r$8 = $f._r$8; _r$9 = $f._r$9; _ref = $f._ref; _ref$1 = $f._ref$1; _tuple = $f._tuple; _tuple$1 = $f._tuple$1; _tuple$10 = $f._tuple$10; _tuple$11 = $f._tuple$11; _tuple$12 = $f._tuple$12; _tuple$13 = $f._tuple$13; _tuple$14 = $f._tuple$14; _tuple$15 = $f._tuple$15; _tuple$2 = $f._tuple$2; _tuple$3 = $f._tuple$3; _tuple$4 = $f._tuple$4; _tuple$5 = $f._tuple$5; _tuple$6 = $f._tuple$6; _tuple$7 = $f._tuple$7; _tuple$8 = $f._tuple$8; _tuple$9 = $f._tuple$9; arg = $f.arg; argCacheable = $f.argCacheable; c = $f.c; c$1 = $f.c$1; c$2 = $f.c$2; ca = $f.ca; cacheable = $f.cacheable; cacheable$1 = $f.cacheable$1; ctx = $f.ctx; err = $f.err; err$1 = $f.err$1; err$2 = $f.err$2; expr = $f.expr; fn = $f.fn; fnCacheable = $f.fnCacheable; mapper = $f.mapper; ok = $f.ok; ok$1 = $f.ok$1; s = $f.s; subCacheable = $f.subCacheable; t = $f.t; t$1 = $f.t$1; t$2 = $f.t$2; t$3 = $f.t$3; t$4 = $f.t$4; v = $f.v; v$1 = $f.v$1; val = $f.val; val$1 = $f.val$1; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+	eval$1 = function(s, expr) {
+		var $ptr, _arg, _arg$1, _arg$2, _arg$3, _arg$4, _arg$5, _entry, _r, _r$1, _r$10, _r$11, _r$12, _r$13, _r$14, _r$15, _r$16, _r$2, _r$3, _r$4, _r$5, _r$6, _r$7, _r$8, _r$9, _ref, _ref$1, _tuple, _tuple$1, _tuple$10, _tuple$11, _tuple$12, _tuple$13, _tuple$14, _tuple$15, _tuple$2, _tuple$3, _tuple$4, _tuple$5, _tuple$6, _tuple$7, _tuple$8, _tuple$9, arg, argCacheable, c, c$1, c$2, ca, cacheable, cacheable$1, err, err$1, err$2, expr, fn, fnCacheable, mapper, ok, ok$1, s, subCacheable, t, t$1, t$2, t$3, t$4, v, v$1, val, val$1, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _arg = $f._arg; _arg$1 = $f._arg$1; _arg$2 = $f._arg$2; _arg$3 = $f._arg$3; _arg$4 = $f._arg$4; _arg$5 = $f._arg$5; _entry = $f._entry; _r = $f._r; _r$1 = $f._r$1; _r$10 = $f._r$10; _r$11 = $f._r$11; _r$12 = $f._r$12; _r$13 = $f._r$13; _r$14 = $f._r$14; _r$15 = $f._r$15; _r$16 = $f._r$16; _r$2 = $f._r$2; _r$3 = $f._r$3; _r$4 = $f._r$4; _r$5 = $f._r$5; _r$6 = $f._r$6; _r$7 = $f._r$7; _r$8 = $f._r$8; _r$9 = $f._r$9; _ref = $f._ref; _ref$1 = $f._ref$1; _tuple = $f._tuple; _tuple$1 = $f._tuple$1; _tuple$10 = $f._tuple$10; _tuple$11 = $f._tuple$11; _tuple$12 = $f._tuple$12; _tuple$13 = $f._tuple$13; _tuple$14 = $f._tuple$14; _tuple$15 = $f._tuple$15; _tuple$2 = $f._tuple$2; _tuple$3 = $f._tuple$3; _tuple$4 = $f._tuple$4; _tuple$5 = $f._tuple$5; _tuple$6 = $f._tuple$6; _tuple$7 = $f._tuple$7; _tuple$8 = $f._tuple$8; _tuple$9 = $f._tuple$9; arg = $f.arg; argCacheable = $f.argCacheable; c = $f.c; c$1 = $f.c$1; c$2 = $f.c$2; ca = $f.ca; cacheable = $f.cacheable; cacheable$1 = $f.cacheable$1; err = $f.err; err$1 = $f.err$1; err$2 = $f.err$2; expr = $f.expr; fn = $f.fn; fnCacheable = $f.fnCacheable; mapper = $f.mapper; ok = $f.ok; ok$1 = $f.ok$1; s = $f.s; subCacheable = $f.subCacheable; t = $f.t; t$1 = $f.t$1; t$2 = $f.t$2; t$3 = $f.t$3; t$4 = $f.t$4; v = $f.v; v$1 = $f.v$1; val = $f.val; val$1 = $f.val$1; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		val = $ifaceNil;
 		cacheable = false;
 		err = $ifaceNil;
@@ -18318,17 +18341,17 @@ $packages["github.com/jtolds/sheepda"] = (function() {
 			ca = [ca];
 			subCacheable = [subCacheable];
 			_ref = expr;
-			/* */ if ($assertType(_ref, ptrType$4, true)[1]) { $s = 3; continue; }
-			/* */ if ($assertType(_ref, ptrType$5, true)[1]) { $s = 4; continue; }
-			/* */ if ($assertType(_ref, ptrType$6, true)[1]) { $s = 5; continue; }
-			/* */ if ($assertType(_ref, ptrType$1, true)[1]) { $s = 6; continue; }
+			/* */ if ($assertType(_ref, ptrType$5, true)[1]) { $s = 3; continue; }
+			/* */ if ($assertType(_ref, ptrType$6, true)[1]) { $s = 4; continue; }
+			/* */ if ($assertType(_ref, ptrType$7, true)[1]) { $s = 5; continue; }
+			/* */ if ($assertType(_ref, ptrType$2, true)[1]) { $s = 6; continue; }
 			/* */ $s = 7; continue;
-			/* if ($assertType(_ref, ptrType$4, true)[1]) { */ case 3:
+			/* if ($assertType(_ref, ptrType$5, true)[1]) { */ case 3:
 				t = _ref.$val;
 				expr = t.Expr;
 				/* continue trampoline; */ $s = 1; continue s;
 				$s = 8; continue;
-			/* } else if ($assertType(_ref, ptrType$5, true)[1]) { */ case 4:
+			/* } else if ($assertType(_ref, ptrType$6, true)[1]) { */ case 4:
 				t$1 = _ref.$val;
 				val$1 = s.Get(t$1.Name);
 				/* */ if ($interfaceIsEqual(val$1, $ifaceNil)) { $s = 9; continue; }
@@ -18352,9 +18375,9 @@ $packages["github.com/jtolds/sheepda"] = (function() {
 				err = _tuple$1[2];
 				$s = -1; return [val, cacheable, err];
 				return [val, cacheable, err];
-			/* } else if ($assertType(_ref, ptrType$6, true)[1]) { */ case 5:
+			/* } else if ($assertType(_ref, ptrType$7, true)[1]) { */ case 5:
 				t$2 = _ref.$val;
-				_r$3 = eval$1(ctx, s, t$2.Func); /* */ $s = 14; case 14: if($c) { $c = false; _r$3 = _r$3.$blk(); } if (_r$3 && _r$3.$blk !== undefined) { break s; }
+				_r$3 = eval$1(s, t$2.Func); /* */ $s = 14; case 14: if($c) { $c = false; _r$3 = _r$3.$blk(); } if (_r$3 && _r$3.$blk !== undefined) { break s; }
 				_tuple$2 = _r$3;
 				fn = _tuple$2[0];
 				fnCacheable = _tuple$2[1];
@@ -18370,7 +18393,7 @@ $packages["github.com/jtolds/sheepda"] = (function() {
 					$s = -1; return [val, cacheable, err];
 					return [val, cacheable, err];
 				/* } */ case 16:
-				_r$5 = eval$1(ctx, s, t$2.Arg); /* */ $s = 18; case 18: if($c) { $c = false; _r$5 = _r$5.$blk(); } if (_r$5 && _r$5.$blk !== undefined) { break s; }
+				_r$5 = eval$1(s, t$2.Arg); /* */ $s = 18; case 18: if($c) { $c = false; _r$5 = _r$5.$blk(); } if (_r$5 && _r$5.$blk !== undefined) { break s; }
 				_tuple$4 = _r$5;
 				arg = _tuple$4[0];
 				argCacheable = _tuple$4[1];
@@ -18388,20 +18411,20 @@ $packages["github.com/jtolds/sheepda"] = (function() {
 				/* } */ case 20:
 				subCacheable[0] = fnCacheable && argCacheable;
 				_ref$1 = fn;
-				/* */ if ($assertType(_ref$1, ptrType$3, true)[1]) { $s = 22; continue; }
-				/* */ if ($assertType(_ref$1, ptrType$7, true)[1]) { $s = 23; continue; }
+				/* */ if ($assertType(_ref$1, ptrType$4, true)[1]) { $s = 22; continue; }
+				/* */ if ($assertType(_ref$1, ptrType$8, true)[1]) { $s = 23; continue; }
 				/* */ $s = 24; continue;
-				/* if ($assertType(_ref$1, ptrType$3, true)[1]) { */ case 22:
+				/* if ($assertType(_ref$1, ptrType$4, true)[1]) { */ case 22:
 					c[0] = _ref$1.$val;
 					s = c[0].Scope.Set(c[0].Lambda.Arg, arg);
 					expr = c[0].Lambda.Body;
-					_tuple$6 = $assertType(arg, ptrType$3, true);
+					_tuple$6 = $assertType(arg, ptrType$4, true);
 					ca[0] = _tuple$6[0];
 					ok = _tuple$6[1];
 					/* */ if (!ok) { $s = 26; continue; }
 					/* */ $s = 27; continue;
 					/* if (!ok) { */ case 26:
-						_r$7 = eval$1(ctx, s, expr); /* */ $s = 28; case 28: if($c) { $c = false; _r$7 = _r$7.$blk(); } if (_r$7 && _r$7.$blk !== undefined) { break s; }
+						_r$7 = eval$1(s, expr); /* */ $s = 28; case 28: if($c) { $c = false; _r$7 = _r$7.$blk(); } if (_r$7 && _r$7.$blk !== undefined) { break s; }
 						_tuple$7 = _r$7;
 						v = _tuple$7[0];
 						cacheable$1 = _tuple$7[1];
@@ -18414,7 +18437,7 @@ $packages["github.com/jtolds/sheepda"] = (function() {
 						$s = -1; return [val, cacheable, err];
 						return [val, cacheable, err];
 					/* } */ case 27:
-					_tuple$9 = (_entry = c[0].memoize[ptrType$3.keyFor(ca[0])], _entry !== undefined ? [_entry.v, true] : [$ifaceNil, false]);
+					_tuple$9 = (_entry = c[0].memoize[ptrType$4.keyFor(ca[0])], _entry !== undefined ? [_entry.v, true] : [$ifaceNil, false]);
 					v$1 = _tuple$9[0];
 					ok$1 = _tuple$9[1];
 					/* */ if (ok$1) { $s = 30; continue; }
@@ -18434,15 +18457,15 @@ $packages["github.com/jtolds/sheepda"] = (function() {
 							return [$ifaceNil, false, err$3];
 						}
 						if (cacheable$2) {
-							_key = ca[0]; (c[0].memoize || $throwRuntimeError("assignment to entry in nil map"))[ptrType$3.keyFor(_key)] = { k: _key, v: v$2 };
+							_key = ca[0]; (c[0].memoize || $throwRuntimeError("assignment to entry in nil map"))[ptrType$4.keyFor(_key)] = { k: _key, v: v$2 };
 						}
 						return [v$2, cacheable$2 && subCacheable[0], $ifaceNil];
 					}; })(c, ca, subCacheable));
 					/* continue trampoline; */ $s = 1; continue s;
 					$s = 25; continue;
-				/* } else if ($assertType(_ref$1, ptrType$7, true)[1]) { */ case 23:
+				/* } else if ($assertType(_ref$1, ptrType$8, true)[1]) { */ case 23:
 					c$1 = _ref$1.$val;
-					_r$10 = c$1.Transform(ctx, arg); /* */ $s = 33; case 33: if($c) { $c = false; _r$10 = _r$10.$blk(); } if (_r$10 && _r$10.$blk !== undefined) { break s; }
+					_r$10 = c$1.Transform(arg); /* */ $s = 33; case 33: if($c) { $c = false; _r$10 = _r$10.$blk(); } if (_r$10 && _r$10.$blk !== undefined) { break s; }
 					_tuple$12 = _r$10;
 					_r$11 = mapper.apply(_tuple$12[0], _tuple$12[1], _tuple$12[2]); /* */ $s = 34; case 34: if($c) { $c = false; _r$11 = _r$11.$blk(); } if (_r$11 && _r$11.$blk !== undefined) { break s; }
 					_tuple$11 = _r$11;
@@ -18465,7 +18488,7 @@ $packages["github.com/jtolds/sheepda"] = (function() {
 					return [val, cacheable, err];
 				/* } */ case 25:
 				$s = 8; continue;
-			/* } else if ($assertType(_ref, ptrType$1, true)[1]) { */ case 6:
+			/* } else if ($assertType(_ref, ptrType$2, true)[1]) { */ case 6:
 				t$3 = _ref.$val;
 				_r$14 = mapper.apply(NewClosure(s, t$3), true, $ifaceNil); /* */ $s = 37; case 37: if($c) { $c = false; _r$14 = _r$14.$blk(); } if (_r$14 && _r$14.$blk !== undefined) { break s; }
 				_tuple$14 = _r$14;
@@ -18490,14 +18513,14 @@ $packages["github.com/jtolds/sheepda"] = (function() {
 		/* } */ $s = 1; continue; case 2:
 		$s = -1; return [val, cacheable, err];
 		return [val, cacheable, err];
-		/* */ } return; } if ($f === undefined) { $f = { $blk: eval$1 }; } $f.$ptr = $ptr; $f._arg = _arg; $f._arg$1 = _arg$1; $f._arg$2 = _arg$2; $f._arg$3 = _arg$3; $f._arg$4 = _arg$4; $f._arg$5 = _arg$5; $f._entry = _entry; $f._r = _r; $f._r$1 = _r$1; $f._r$10 = _r$10; $f._r$11 = _r$11; $f._r$12 = _r$12; $f._r$13 = _r$13; $f._r$14 = _r$14; $f._r$15 = _r$15; $f._r$16 = _r$16; $f._r$2 = _r$2; $f._r$3 = _r$3; $f._r$4 = _r$4; $f._r$5 = _r$5; $f._r$6 = _r$6; $f._r$7 = _r$7; $f._r$8 = _r$8; $f._r$9 = _r$9; $f._ref = _ref; $f._ref$1 = _ref$1; $f._tuple = _tuple; $f._tuple$1 = _tuple$1; $f._tuple$10 = _tuple$10; $f._tuple$11 = _tuple$11; $f._tuple$12 = _tuple$12; $f._tuple$13 = _tuple$13; $f._tuple$14 = _tuple$14; $f._tuple$15 = _tuple$15; $f._tuple$2 = _tuple$2; $f._tuple$3 = _tuple$3; $f._tuple$4 = _tuple$4; $f._tuple$5 = _tuple$5; $f._tuple$6 = _tuple$6; $f._tuple$7 = _tuple$7; $f._tuple$8 = _tuple$8; $f._tuple$9 = _tuple$9; $f.arg = arg; $f.argCacheable = argCacheable; $f.c = c; $f.c$1 = c$1; $f.c$2 = c$2; $f.ca = ca; $f.cacheable = cacheable; $f.cacheable$1 = cacheable$1; $f.ctx = ctx; $f.err = err; $f.err$1 = err$1; $f.err$2 = err$2; $f.expr = expr; $f.fn = fn; $f.fnCacheable = fnCacheable; $f.mapper = mapper; $f.ok = ok; $f.ok$1 = ok$1; $f.s = s; $f.subCacheable = subCacheable; $f.t = t; $f.t$1 = t$1; $f.t$2 = t$2; $f.t$3 = t$3; $f.t$4 = t$4; $f.v = v; $f.v$1 = v$1; $f.val = val; $f.val$1 = val$1; $f.$s = $s; $f.$r = $r; return $f;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: eval$1 }; } $f.$ptr = $ptr; $f._arg = _arg; $f._arg$1 = _arg$1; $f._arg$2 = _arg$2; $f._arg$3 = _arg$3; $f._arg$4 = _arg$4; $f._arg$5 = _arg$5; $f._entry = _entry; $f._r = _r; $f._r$1 = _r$1; $f._r$10 = _r$10; $f._r$11 = _r$11; $f._r$12 = _r$12; $f._r$13 = _r$13; $f._r$14 = _r$14; $f._r$15 = _r$15; $f._r$16 = _r$16; $f._r$2 = _r$2; $f._r$3 = _r$3; $f._r$4 = _r$4; $f._r$5 = _r$5; $f._r$6 = _r$6; $f._r$7 = _r$7; $f._r$8 = _r$8; $f._r$9 = _r$9; $f._ref = _ref; $f._ref$1 = _ref$1; $f._tuple = _tuple; $f._tuple$1 = _tuple$1; $f._tuple$10 = _tuple$10; $f._tuple$11 = _tuple$11; $f._tuple$12 = _tuple$12; $f._tuple$13 = _tuple$13; $f._tuple$14 = _tuple$14; $f._tuple$15 = _tuple$15; $f._tuple$2 = _tuple$2; $f._tuple$3 = _tuple$3; $f._tuple$4 = _tuple$4; $f._tuple$5 = _tuple$5; $f._tuple$6 = _tuple$6; $f._tuple$7 = _tuple$7; $f._tuple$8 = _tuple$8; $f._tuple$9 = _tuple$9; $f.arg = arg; $f.argCacheable = argCacheable; $f.c = c; $f.c$1 = c$1; $f.c$2 = c$2; $f.ca = ca; $f.cacheable = cacheable; $f.cacheable$1 = cacheable$1; $f.err = err; $f.err$1 = err$1; $f.err$2 = err$2; $f.expr = expr; $f.fn = fn; $f.fnCacheable = fnCacheable; $f.mapper = mapper; $f.ok = ok; $f.ok$1 = ok$1; $f.s = s; $f.subCacheable = subCacheable; $f.t = t; $f.t$1 = t$1; $f.t$2 = t$2; $f.t$3 = t$3; $f.t$4 = t$4; $f.v = v; $f.v$1 = v$1; $f.val = val; $f.val$1 = val$1; $f.$s = $s; $f.$r = $r; return $f;
 	};
-	Eval = function(ctx, s, expr) {
-		var $ptr, _r, _tmp, _tmp$1, _tuple, ctx, err, expr, s, val, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _r = $f._r; _tmp = $f._tmp; _tmp$1 = $f._tmp$1; _tuple = $f._tuple; ctx = $f.ctx; err = $f.err; expr = $f.expr; s = $f.s; val = $f.val; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+	Eval = function(s, expr) {
+		var $ptr, _r, _tmp, _tmp$1, _tuple, err, expr, s, val, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _r = $f._r; _tmp = $f._tmp; _tmp$1 = $f._tmp$1; _tuple = $f._tuple; err = $f.err; expr = $f.expr; s = $f.s; val = $f.val; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		val = $ifaceNil;
 		err = $ifaceNil;
-		_r = eval$1(ctx, s, expr); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		_r = eval$1(s, expr); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
 		_tuple = _r;
 		val = _tuple[0];
 		err = _tuple[2];
@@ -18507,7 +18530,7 @@ $packages["github.com/jtolds/sheepda"] = (function() {
 		err = _tmp$1;
 		$s = -1; return [val, err];
 		return [val, err];
-		/* */ } return; } if ($f === undefined) { $f = { $blk: Eval }; } $f.$ptr = $ptr; $f._r = _r; $f._tmp = _tmp; $f._tmp$1 = _tmp$1; $f._tuple = _tuple; $f.ctx = ctx; $f.err = err; $f.expr = expr; $f.s = s; $f.val = val; $f.$s = $s; $f.$r = $r; return $f;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: Eval }; } $f.$ptr = $ptr; $f._r = _r; $f._tmp = _tmp; $f._tmp$1 = _tmp$1; $f._tuple = _tuple; $f.err = err; $f.expr = expr; $f.s = s; $f.val = val; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	$pkg.Eval = Eval;
 	IsVariableRune = function(ch) {
@@ -18579,30 +18602,30 @@ $packages["github.com/jtolds/sheepda"] = (function() {
 		_r = s.AssertMatch($pkg.Lambdas); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
 		err = _r;
 		if (!($interfaceIsEqual(err, $ifaceNil))) {
-			$s = -1; return [ptrType$1.nil, err];
-			return [ptrType$1.nil, err];
+			$s = -1; return [ptrType$2.nil, err];
+			return [ptrType$2.nil, err];
 		}
 		_r$1 = ParseVariable(s); /* */ $s = 2; case 2: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
 		_tuple = _r$1;
 		arg = _tuple[0];
 		err = _tuple[1];
 		if (!($interfaceIsEqual(err, $ifaceNil))) {
-			$s = -1; return [ptrType$1.nil, err];
-			return [ptrType$1.nil, err];
+			$s = -1; return [ptrType$2.nil, err];
+			return [ptrType$2.nil, err];
 		}
 		_r$2 = s.AssertMatch($makeMap($Int32.keyFor, [{ k: 46, v: true }])); /* */ $s = 3; case 3: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
 		err = _r$2;
 		if (!($interfaceIsEqual(err, $ifaceNil))) {
-			$s = -1; return [ptrType$1.nil, err];
-			return [ptrType$1.nil, err];
+			$s = -1; return [ptrType$2.nil, err];
+			return [ptrType$2.nil, err];
 		}
 		_r$3 = ParseExpr(s); /* */ $s = 4; case 4: if($c) { $c = false; _r$3 = _r$3.$blk(); } if (_r$3 && _r$3.$blk !== undefined) { break s; }
 		_tuple$1 = _r$3;
 		body = _tuple$1[0];
 		err = _tuple$1[1];
 		if (!($interfaceIsEqual(err, $ifaceNil))) {
-			$s = -1; return [ptrType$1.nil, err];
-			return [ptrType$1.nil, err];
+			$s = -1; return [ptrType$2.nil, err];
+			return [ptrType$2.nil, err];
 		}
 		$s = -1; return [new LambdaExpr.ptr(arg, body), $ifaceNil];
 		return [new LambdaExpr.ptr(arg, body), $ifaceNil];
@@ -18610,73 +18633,75 @@ $packages["github.com/jtolds/sheepda"] = (function() {
 	};
 	$pkg.ParseLambda = ParseLambda;
 	ApplicationExpr.ptr.prototype.String = function() {
-		var $ptr, _r, e, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _r = $f._r; e = $f.e; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		var $ptr, _r, _r$1, _tuple, e, l, ok, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _r = $f._r; _r$1 = $f._r$1; _tuple = $f._tuple; e = $f.e; l = $f.l; ok = $f.ok; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		e = this;
-		_r = fmt.Sprintf("(%s %s)", new sliceType([e.Func, e.Arg])); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
-		$s = -1; return _r;
-		return _r;
-		/* */ } return; } if ($f === undefined) { $f = { $blk: ApplicationExpr.ptr.prototype.String }; } $f.$ptr = $ptr; $f._r = _r; $f.e = e; $f.$s = $s; $f.$r = $r; return $f;
+		_tuple = $assertType(e.Func, ptrType$2, true);
+		l = _tuple[0];
+		ok = _tuple[1];
+		/* */ if (ok) { $s = 1; continue; }
+		/* */ $s = 2; continue;
+		/* if (ok) { */ case 1:
+			_r = fmt.Sprintf("((%s) %s)", new sliceType([l, e.Arg])); /* */ $s = 3; case 3: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+			$s = -1; return _r;
+			return _r;
+		/* } */ case 2:
+		_r$1 = fmt.Sprintf("(%s %s)", new sliceType([e.Func, e.Arg])); /* */ $s = 4; case 4: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
+		$s = -1; return _r$1;
+		return _r$1;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: ApplicationExpr.ptr.prototype.String }; } $f.$ptr = $ptr; $f._r = _r; $f._r$1 = _r$1; $f._tuple = _tuple; $f.e = e; $f.l = l; $f.ok = ok; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	ApplicationExpr.prototype.String = function() { return this.$val.String(); };
-	ParseApplication = function(s) {
-		var $ptr, _r, _r$1, _r$2, _r$3, _r$4, _r$5, _tuple, _tuple$1, _tuple$2, _tuple$3, arg, err, err$1, fn, next, r, result, s, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; _r$3 = $f._r$3; _r$4 = $f._r$4; _r$5 = $f._r$5; _tuple = $f._tuple; _tuple$1 = $f._tuple$1; _tuple$2 = $f._tuple$2; _tuple$3 = $f._tuple$3; arg = $f.arg; err = $f.err; err$1 = $f.err$1; fn = $f.fn; next = $f.next; r = $f.r; result = $f.result; s = $f.s; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+	ParseSubexpression = function(s) {
+		var $ptr, _r, _r$1, _r$2, _r$3, _r$4, _tuple, _tuple$1, _tuple$2, err, err$1, fn, next, r, result, s, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; _r$3 = $f._r$3; _r$4 = $f._r$4; _tuple = $f._tuple; _tuple$1 = $f._tuple$1; _tuple$2 = $f._tuple$2; err = $f.err; err$1 = $f.err$1; fn = $f.fn; next = $f.next; r = $f.r; result = $f.result; s = $f.s; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		_r = s.AssertMatch($makeMap($Int32.keyFor, [{ k: 40, v: true }])); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
 		err = _r;
 		if (!($interfaceIsEqual(err, $ifaceNil))) {
-			$s = -1; return [ptrType$6.nil, err];
-			return [ptrType$6.nil, err];
+			$s = -1; return [$ifaceNil, err];
+			return [$ifaceNil, err];
 		}
 		_r$1 = ParseExpr(s); /* */ $s = 2; case 2: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
 		_tuple = _r$1;
 		fn = _tuple[0];
 		err = _tuple[1];
 		if (!($interfaceIsEqual(err, $ifaceNil))) {
-			$s = -1; return [ptrType$6.nil, err];
-			return [ptrType$6.nil, err];
+			$s = -1; return [$ifaceNil, err];
+			return [$ifaceNil, err];
 		}
-		_r$2 = ParseExpr(s); /* */ $s = 3; case 3: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
-		_tuple$1 = _r$2;
-		arg = _tuple$1[0];
-		err = _tuple$1[1];
-		if (!($interfaceIsEqual(err, $ifaceNil))) {
-			$s = -1; return [ptrType$6.nil, err];
-			return [ptrType$6.nil, err];
-		}
-		result = new ApplicationExpr.ptr(fn, arg);
-		/* while (true) { */ case 4:
-			_r$3 = s.Peek(); /* */ $s = 6; case 6: if($c) { $c = false; _r$3 = _r$3.$blk(); } if (_r$3 && _r$3.$blk !== undefined) { break s; }
-			_tuple$2 = _r$3;
-			r = _tuple$2[0];
+		result = fn;
+		/* while (true) { */ case 3:
+			_r$2 = s.Peek(); /* */ $s = 5; case 5: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
+			_tuple$1 = _r$2;
+			r = _tuple$1[0];
+			err$1 = _tuple$1[1];
+			if (!($interfaceIsEqual(err$1, $ifaceNil))) {
+				$s = -1; return [$ifaceNil, err$1];
+				return [$ifaceNil, err$1];
+			}
+			/* */ if (r === 41) { $s = 6; continue; }
+			/* */ $s = 7; continue;
+			/* if (r === 41) { */ case 6:
+				s.Next();
+				_r$3 = s.SwallowWhitespace(); /* */ $s = 8; case 8: if($c) { $c = false; _r$3 = _r$3.$blk(); } if (_r$3 && _r$3.$blk !== undefined) { break s; }
+				$s = -1; return [result, _r$3];
+				return [result, _r$3];
+			/* } */ case 7:
+			_r$4 = ParseExpr(s); /* */ $s = 9; case 9: if($c) { $c = false; _r$4 = _r$4.$blk(); } if (_r$4 && _r$4.$blk !== undefined) { break s; }
+			_tuple$2 = _r$4;
+			next = _tuple$2[0];
 			err$1 = _tuple$2[1];
 			if (!($interfaceIsEqual(err$1, $ifaceNil))) {
-				$s = -1; return [ptrType$6.nil, err$1];
-				return [ptrType$6.nil, err$1];
-			}
-			/* */ if (r === 41) { $s = 7; continue; }
-			/* */ $s = 8; continue;
-			/* if (r === 41) { */ case 7:
-				s.Next();
-				_r$4 = s.SwallowWhitespace(); /* */ $s = 9; case 9: if($c) { $c = false; _r$4 = _r$4.$blk(); } if (_r$4 && _r$4.$blk !== undefined) { break s; }
-				$s = -1; return [result, _r$4];
-				return [result, _r$4];
-			/* } */ case 8:
-			_r$5 = ParseExpr(s); /* */ $s = 10; case 10: if($c) { $c = false; _r$5 = _r$5.$blk(); } if (_r$5 && _r$5.$blk !== undefined) { break s; }
-			_tuple$3 = _r$5;
-			next = _tuple$3[0];
-			err$1 = _tuple$3[1];
-			if (!($interfaceIsEqual(err$1, $ifaceNil))) {
-				$s = -1; return [ptrType$6.nil, err$1];
-				return [ptrType$6.nil, err$1];
+				$s = -1; return [$ifaceNil, err$1];
+				return [$ifaceNil, err$1];
 			}
 			result = new ApplicationExpr.ptr(result, next);
-		/* } */ $s = 4; continue; case 5:
-		$s = -1; return [ptrType$6.nil, $ifaceNil];
-		return [ptrType$6.nil, $ifaceNil];
-		/* */ } return; } if ($f === undefined) { $f = { $blk: ParseApplication }; } $f.$ptr = $ptr; $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f._r$3 = _r$3; $f._r$4 = _r$4; $f._r$5 = _r$5; $f._tuple = _tuple; $f._tuple$1 = _tuple$1; $f._tuple$2 = _tuple$2; $f._tuple$3 = _tuple$3; $f.arg = arg; $f.err = err; $f.err$1 = err$1; $f.fn = fn; $f.next = next; $f.r = r; $f.result = result; $f.s = s; $f.$s = $s; $f.$r = $r; return $f;
+		/* } */ $s = 3; continue; case 4:
+		$s = -1; return [$ifaceNil, $ifaceNil];
+		return [$ifaceNil, $ifaceNil];
+		/* */ } return; } if ($f === undefined) { $f = { $blk: ParseSubexpression }; } $f.$ptr = $ptr; $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f._r$3 = _r$3; $f._r$4 = _r$4; $f._tuple = _tuple; $f._tuple$1 = _tuple$1; $f._tuple$2 = _tuple$2; $f.err = err; $f.err$1 = err$1; $f.fn = fn; $f.next = next; $f.r = r; $f.result = result; $f.s = s; $f.$s = $s; $f.$r = $r; return $f;
 	};
-	$pkg.ParseApplication = ParseApplication;
+	$pkg.ParseSubexpression = ParseSubexpression;
 	VariableExpr.ptr.prototype.String = function() {
 		var $ptr, e;
 		e = this;
@@ -18684,8 +18709,8 @@ $packages["github.com/jtolds/sheepda"] = (function() {
 	};
 	VariableExpr.prototype.String = function() { return this.$val.String(); };
 	ParseExpr = function(s) {
-		var $ptr, _entry, _r, _r$1, _r$2, _r$3, _r$4, _returncast, _returncast$1, _tuple, _tuple$1, err, err$1, name, r, s, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _entry = $f._entry; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; _r$3 = $f._r$3; _r$4 = $f._r$4; _returncast = $f._returncast; _returncast$1 = $f._returncast$1; _tuple = $f._tuple; _tuple$1 = $f._tuple$1; err = $f.err; err$1 = $f.err$1; name = $f.name; r = $f.r; s = $f.s; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		var $ptr, _entry, _r, _r$1, _r$2, _r$3, _r$4, _returncast, _tuple, _tuple$1, err, err$1, name, r, s, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _entry = $f._entry; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; _r$3 = $f._r$3; _r$4 = $f._r$4; _returncast = $f._returncast; _tuple = $f._tuple; _tuple$1 = $f._tuple$1; err = $f.err; err$1 = $f.err$1; name = $f.name; r = $f.r; s = $f.s; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		_r = s.Peek(); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
 		_tuple = _r;
 		r = _tuple[0];
@@ -18705,10 +18730,9 @@ $packages["github.com/jtolds/sheepda"] = (function() {
 		/* */ if (r === 40) { $s = 5; continue; }
 		/* */ $s = 6; continue;
 		/* if (r === 40) { */ case 5:
-			_r$2 = ParseApplication(s); /* */ $s = 7; case 7: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
-			_returncast$1 = _r$2;
-			$s = -1; return [_returncast$1[0], _returncast$1[1]];
-			return [_returncast$1[0], _returncast$1[1]];
+			_r$2 = ParseSubexpression(s); /* */ $s = 7; case 7: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
+			$s = -1; return _r$2;
+			return _r$2;
 		/* } */ case 6:
 		/* */ if (IsVariableRune(r)) { $s = 8; continue; }
 		/* */ $s = 9; continue;
@@ -18723,7 +18747,7 @@ $packages["github.com/jtolds/sheepda"] = (function() {
 		_r$4 = fmt.Errorf("expression not found", new sliceType([])); /* */ $s = 11; case 11: if($c) { $c = false; _r$4 = _r$4.$blk(); } if (_r$4 && _r$4.$blk !== undefined) { break s; }
 		$s = -1; return [$ifaceNil, _r$4];
 		return [$ifaceNil, _r$4];
-		/* */ } return; } if ($f === undefined) { $f = { $blk: ParseExpr }; } $f.$ptr = $ptr; $f._entry = _entry; $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f._r$3 = _r$3; $f._r$4 = _r$4; $f._returncast = _returncast; $f._returncast$1 = _returncast$1; $f._tuple = _tuple; $f._tuple$1 = _tuple$1; $f.err = err; $f.err$1 = err$1; $f.name = name; $f.r = r; $f.s = s; $f.$s = $s; $f.$r = $r; return $f;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: ParseExpr }; } $f.$ptr = $ptr; $f._entry = _entry; $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f._r$3 = _r$3; $f._r$4 = _r$4; $f._returncast = _returncast; $f._tuple = _tuple; $f._tuple$1 = _tuple$1; $f.err = err; $f.err$1 = err$1; $f.name = name; $f.r = r; $f.s = s; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	$pkg.ParseExpr = ParseExpr;
 	ProgramExpr.ptr.prototype.String = function() {
@@ -18735,13 +18759,13 @@ $packages["github.com/jtolds/sheepda"] = (function() {
 		expr = e.Expr;
 		applications = false;
 		/* while (true) { */ case 1:
-			_tuple = $assertType(expr, ptrType$6, true);
+			_tuple = $assertType(expr, ptrType$7, true);
 			t = _tuple[0];
 			ok = _tuple[1];
 			/* */ if (ok) { $s = 3; continue; }
 			/* */ $s = 4; continue;
 			/* if (ok) { */ case 3:
-				_tuple$1 = $assertType(t.Func, ptrType$1, true);
+				_tuple$1 = $assertType(t.Func, ptrType$2, true);
 				fn = _tuple$1[0];
 				ok$1 = _tuple$1[1];
 				/* */ if (ok$1) { $s = 5; continue; }
@@ -18776,8 +18800,8 @@ $packages["github.com/jtolds/sheepda"] = (function() {
 		_r = s.SwallowWhitespace(); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
 		err = _r;
 		if (!($interfaceIsEqual(err, $ifaceNil))) {
-			$s = -1; return [ptrType$4.nil, err];
-			return [ptrType$4.nil, err];
+			$s = -1; return [ptrType$5.nil, err];
+			return [ptrType$5.nil, err];
 		}
 		assignments = sliceType$2.nil;
 		/* while (true) { */ case 2:
@@ -18786,8 +18810,8 @@ $packages["github.com/jtolds/sheepda"] = (function() {
 			expr = _tuple[0];
 			err$1 = _tuple[1];
 			if (!($interfaceIsEqual(err$1, $ifaceNil))) {
-				$s = -1; return [ptrType$4.nil, err$1];
-				return [ptrType$4.nil, err$1];
+				$s = -1; return [ptrType$5.nil, err$1];
+				return [ptrType$5.nil, err$1];
 			}
 			if (s.EOF()) {
 				i = assignments.$length - 1 >> 0;
@@ -18799,40 +18823,40 @@ $packages["github.com/jtolds/sheepda"] = (function() {
 				$s = -1; return [new ProgramExpr.ptr(expr), $ifaceNil];
 				return [new ProgramExpr.ptr(expr), $ifaceNil];
 			}
-			_tuple$1 = $assertType(expr, ptrType$5, true);
+			_tuple$1 = $assertType(expr, ptrType$6, true);
 			t = _tuple$1[0];
 			ok = _tuple$1[1];
 			/* */ if (!ok) { $s = 5; continue; }
 			/* */ $s = 6; continue;
 			/* if (!ok) { */ case 5:
 				_r$2 = fmt.Errorf("unparsed code remaining", new sliceType([])); /* */ $s = 7; case 7: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
-				$s = -1; return [ptrType$4.nil, _r$2];
-				return [ptrType$4.nil, _r$2];
+				$s = -1; return [ptrType$5.nil, _r$2];
+				return [ptrType$5.nil, _r$2];
 			/* } */ case 6:
 			_r$3 = s.AssertMatch($makeMap($Int32.keyFor, [{ k: 61, v: true }])); /* */ $s = 8; case 8: if($c) { $c = false; _r$3 = _r$3.$blk(); } if (_r$3 && _r$3.$blk !== undefined) { break s; }
 			err$1 = _r$3;
 			if (!($interfaceIsEqual(err$1, $ifaceNil))) {
-				$s = -1; return [ptrType$4.nil, err$1];
-				return [ptrType$4.nil, err$1];
+				$s = -1; return [ptrType$5.nil, err$1];
+				return [ptrType$5.nil, err$1];
 			}
 			_r$4 = ParseExpr(s); /* */ $s = 9; case 9: if($c) { $c = false; _r$4 = _r$4.$blk(); } if (_r$4 && _r$4.$blk !== undefined) { break s; }
 			_tuple$2 = _r$4;
 			rhs = _tuple$2[0];
 			err$1 = _tuple$2[1];
 			if (!($interfaceIsEqual(err$1, $ifaceNil))) {
-				$s = -1; return [ptrType$4.nil, err$1];
-				return [ptrType$4.nil, err$1];
+				$s = -1; return [ptrType$5.nil, err$1];
+				return [ptrType$5.nil, err$1];
 			}
 			assignments = $append(assignments, new assignment.ptr(t.Name, rhs));
 		/* } */ $s = 2; continue; case 3:
-		$s = -1; return [ptrType$4.nil, $ifaceNil];
-		return [ptrType$4.nil, $ifaceNil];
+		$s = -1; return [ptrType$5.nil, $ifaceNil];
+		return [ptrType$5.nil, $ifaceNil];
 		/* */ } return; } if ($f === undefined) { $f = { $blk: Parse }; } $f.$ptr = $ptr; $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f._r$3 = _r$3; $f._r$4 = _r$4; $f._tuple = _tuple; $f._tuple$1 = _tuple$1; $f._tuple$2 = _tuple$2; $f.assignments = assignments; $f.err = err; $f.err$1 = err$1; $f.expr = expr; $f.i = i; $f.ok = ok; $f.rhs = rhs; $f.s = s; $f.t = t; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	$pkg.Parse = Parse;
 	NewStream = function(in$1) {
 		var $ptr, in$1;
-		return new Stream.ptr(bufio.NewReader(in$1), ptrType$8.nil, $ifaceNil);
+		return new Stream.ptr(bufio.NewReader(in$1), ptrType$9.nil, $ifaceNil);
 	};
 	$pkg.NewStream = NewStream;
 	Stream.ptr.prototype.EOF = function() {
@@ -18870,7 +18894,7 @@ $packages["github.com/jtolds/sheepda"] = (function() {
 		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; _tuple = $f._tuple; _tuple$1 = $f._tuple$1; err = $f.err; err$1 = $f.err$1; r = $f.r; r$1 = $f.r$1; s = $f.s; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		r = [r];
 		s = this;
-		if (!(s.next === ptrType$8.nil)) {
+		if (!(s.next === ptrType$9.nil)) {
 			$s = -1; return $ifaceNil;
 			return $ifaceNil;
 		}
@@ -18908,7 +18932,7 @@ $packages["github.com/jtolds/sheepda"] = (function() {
 			$s = -1; return _r$2;
 			return _r$2;
 		/* } */ case 3:
-		s.next = (r.$ptr || (r.$ptr = new ptrType$8(function() { return this.$target[0]; }, function($v) { this.$target[0] = $v; }, r)));
+		s.next = (r.$ptr || (r.$ptr = new ptrType$9(function() { return this.$target[0]; }, function($v) { this.$target[0] = $v; }, r)));
 		$s = -1; return $ifaceNil;
 		return $ifaceNil;
 		/* */ } return; } if ($f === undefined) { $f = { $blk: Stream.ptr.prototype.fillNext }; } $f.$ptr = $ptr; $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f._tuple = _tuple; $f._tuple$1 = _tuple$1; $f.err = err; $f.err$1 = err$1; $f.r = r; $f.r$1 = r$1; $f.s = s; $f.$s = $s; $f.$r = $r; return $f;
@@ -18932,7 +18956,7 @@ $packages["github.com/jtolds/sheepda"] = (function() {
 	Stream.ptr.prototype.Next = function() {
 		var $ptr, s;
 		s = this;
-		s.next = ptrType$8.nil;
+		s.next = ptrType$9.nil;
 	};
 	Stream.prototype.Next = function() { return this.$val.Next(); };
 	Stream.ptr.prototype.Get = function() {
@@ -19008,22 +19032,22 @@ $packages["github.com/jtolds/sheepda"] = (function() {
 		/* */ } return; } if ($f === undefined) { $f = { $blk: Stream.ptr.prototype.AssertMatch }; } $f.$ptr = $ptr; $f._entry = _entry; $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f._tuple = _tuple; $f.err = err; $f.options = options; $f.r = r; $f.s = s; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	Stream.prototype.AssertMatch = function(options) { return this.$val.AssertMatch(options); };
-	ptrType$9.methods = [{prop: "readByte", name: "readByte", pkg: "github.com/jtolds/sheepda", typ: $funcType([], [$Uint8, $error], false)}];
-	Byte.methods = [{prop: "String", name: "String", pkg: "", typ: $funcType([], [$String], false)}];
-	ptrType$7.methods = [{prop: "String", name: "String", pkg: "", typ: $funcType([], [$String], false)}];
-	ptrType$2.methods = [{prop: "SetBuiltin", name: "SetBuiltin", pkg: "", typ: $funcType([$String, funcType], [ptrType$2], false)}, {prop: "Get", name: "Get", pkg: "", typ: $funcType([$String], [Value], false)}, {prop: "Set", name: "Set", pkg: "", typ: $funcType([$String, Value], [ptrType$2], false)}];
-	ptrType$3.methods = [{prop: "String", name: "String", pkg: "", typ: $funcType([], [$String], false)}];
+	ptrType$1.methods = [{prop: "readByte", name: "readByte", pkg: "github.com/jtolds/sheepda", typ: $funcType([], [$Uint8, $error], false)}];
+	byteVal.methods = [{prop: "String", name: "String", pkg: "", typ: $funcType([], [$String], false)}];
+	ptrType$8.methods = [{prop: "String", name: "String", pkg: "", typ: $funcType([], [$String], false)}];
+	ptrType$3.methods = [{prop: "SetBuiltin", name: "SetBuiltin", pkg: "", typ: $funcType([$String, funcType], [ptrType$3], false)}, {prop: "Get", name: "Get", pkg: "", typ: $funcType([$String], [Value], false)}, {prop: "Set", name: "Set", pkg: "", typ: $funcType([$String, Value], [ptrType$3], false)}];
+	ptrType$4.methods = [{prop: "String", name: "String", pkg: "", typ: $funcType([], [$String], false)}];
 	resultMaps.methods = [{prop: "apply", name: "apply", pkg: "github.com/jtolds/sheepda", typ: $funcType([Value, $Bool, $error], [Value, $Bool, $error], false)}];
-	ptrType$1.methods = [{prop: "String", name: "String", pkg: "", typ: $funcType([], [$String], false)}];
+	ptrType$2.methods = [{prop: "String", name: "String", pkg: "", typ: $funcType([], [$String], false)}];
+	ptrType$7.methods = [{prop: "String", name: "String", pkg: "", typ: $funcType([], [$String], false)}];
 	ptrType$6.methods = [{prop: "String", name: "String", pkg: "", typ: $funcType([], [$String], false)}];
 	ptrType$5.methods = [{prop: "String", name: "String", pkg: "", typ: $funcType([], [$String], false)}];
-	ptrType$4.methods = [{prop: "String", name: "String", pkg: "", typ: $funcType([], [$String], false)}];
 	ptrType$10.methods = [{prop: "EOF", name: "EOF", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "readRune", name: "readRune", pkg: "github.com/jtolds/sheepda", typ: $funcType([], [$Int32, $error], false)}, {prop: "fillNext", name: "fillNext", pkg: "github.com/jtolds/sheepda", typ: $funcType([], [$error], false)}, {prop: "Peek", name: "Peek", pkg: "", typ: $funcType([], [$Int32, $error], false)}, {prop: "Next", name: "Next", pkg: "", typ: $funcType([], [], false)}, {prop: "Get", name: "Get", pkg: "", typ: $funcType([], [$Int32, $error], false)}, {prop: "SwallowWhitespace", name: "SwallowWhitespace", pkg: "", typ: $funcType([], [$error], false)}, {prop: "AssertMatch", name: "AssertMatch", pkg: "", typ: $funcType([mapType], [$error], false)}];
-	Context.init("github.com/jtolds/sheepda", [{prop: "out", name: "out", exported: false, typ: io.Writer, tag: ""}, {prop: "in$1", name: "in", exported: false, typ: ptrType, tag: ""}, {prop: "err", name: "err", exported: false, typ: $error, tag: ""}]);
+	byteStream.init("github.com/jtolds/sheepda", [{prop: "in$0", name: "in", exported: false, typ: ptrType, tag: ""}, {prop: "err", name: "err", exported: false, typ: $error, tag: ""}]);
 	Builtin.init("", [{prop: "Name", name: "Name", exported: true, typ: $String, tag: ""}, {prop: "Transform", name: "Transform", exported: true, typ: funcType, tag: ""}]);
-	Scope.init("", [{prop: "Name", name: "Name", exported: true, typ: $String, tag: ""}, {prop: "Value", name: "Value", exported: true, typ: Value, tag: ""}, {prop: "Parent", name: "Parent", exported: true, typ: ptrType$2, tag: ""}]);
+	Scope.init("", [{prop: "Name", name: "Name", exported: true, typ: $String, tag: ""}, {prop: "Value", name: "Value", exported: true, typ: Value, tag: ""}, {prop: "Parent", name: "Parent", exported: true, typ: ptrType$3, tag: ""}]);
 	Value.init([{prop: "String", name: "String", pkg: "", typ: $funcType([], [$String], false)}]);
-	Closure.init("github.com/jtolds/sheepda", [{prop: "Scope", name: "Scope", exported: true, typ: ptrType$2, tag: ""}, {prop: "Lambda", name: "Lambda", exported: true, typ: ptrType$1, tag: ""}, {prop: "memoize", name: "memoize", exported: false, typ: mapType$1, tag: ""}]);
+	Closure.init("github.com/jtolds/sheepda", [{prop: "Scope", name: "Scope", exported: true, typ: ptrType$3, tag: ""}, {prop: "Lambda", name: "Lambda", exported: true, typ: ptrType$2, tag: ""}, {prop: "memoize", name: "memoize", exported: false, typ: mapType$1, tag: ""}]);
 	resultMaps.init(funcType$1);
 	Expr.init([{prop: "String", name: "String", pkg: "", typ: $funcType([], [$String], false)}]);
 	LambdaExpr.init("", [{prop: "Arg", name: "Arg", exported: true, typ: $String, tag: ""}, {prop: "Body", name: "Body", exported: true, typ: Expr, tag: ""}]);
@@ -19031,7 +19055,7 @@ $packages["github.com/jtolds/sheepda"] = (function() {
 	VariableExpr.init("", [{prop: "Name", name: "Name", exported: true, typ: $String, tag: ""}]);
 	assignment.init("", [{prop: "LHS", name: "LHS", exported: true, typ: $String, tag: ""}, {prop: "RHS", name: "RHS", exported: true, typ: Expr, tag: ""}]);
 	ProgramExpr.init("", [{prop: "Expr", name: "", exported: true, typ: Expr, tag: ""}]);
-	Stream.init("github.com/jtolds/sheepda", [{prop: "data", name: "data", exported: false, typ: ptrType, tag: ""}, {prop: "next", name: "next", exported: false, typ: ptrType$8, tag: ""}, {prop: "err", name: "err", exported: false, typ: $error, tag: ""}]);
+	Stream.init("github.com/jtolds/sheepda", [{prop: "data", name: "data", exported: false, typ: ptrType, tag: ""}, {prop: "next", name: "next", exported: false, typ: ptrType$9, tag: ""}, {prop: "err", name: "err", exported: false, typ: $error, tag: ""}]);
 	$init = function() {
 		$pkg.$init = function() {};
 		/* */ var $f, $c = false, $s = 0, $r; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
@@ -19040,8 +19064,9 @@ $packages["github.com/jtolds/sheepda"] = (function() {
 		$r = fmt.$init(); /* */ $s = 3; case 3: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 		$r = io.$init(); /* */ $s = 4; case 4: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 		$r = unicode.$init(); /* */ $s = 5; case 5: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-		trueClosure = NewClosure(NewScope(), new LambdaExpr.ptr("t", new LambdaExpr.ptr("f", new VariableExpr.ptr("t"))));
-		falseClosure = NewClosure(NewScope(), new LambdaExpr.ptr("t", new LambdaExpr.ptr("f", new VariableExpr.ptr("f"))));
+		churchTrue = NewClosure(NewScope(), new LambdaExpr.ptr("t", new LambdaExpr.ptr("f", new VariableExpr.ptr("t"))));
+		churchFalse = NewClosure(NewScope(), new LambdaExpr.ptr("t", new LambdaExpr.ptr("f", new VariableExpr.ptr("f"))));
+		eofValue = ChurchPair(ChurchBool(false), ChurchNumeral(0));
 		$pkg.Lambdas = $makeMap($Int32.keyFor, [{ k: 923, v: true }, { k: 955, v: true }, { k: 7463, v: true }, { k: 11414, v: true }, { k: 11415, v: true }, { k: 120498, v: true }, { k: 120524, v: true }, { k: 120556, v: true }, { k: 120582, v: true }, { k: 120614, v: true }, { k: 120640, v: true }, { k: 120672, v: true }, { k: 120698, v: true }, { k: 120730, v: true }, { k: 120756, v: true }, { k: 92, v: true }]);
 		/* */ } return; } if ($f === undefined) { $f = { $blk: $init }; } $f.$s = $s; $f.$r = $r; return $f;
 	};
@@ -19065,8 +19090,8 @@ $packages["github.com/jtolds/sheepda/bin/sheepdajs"] = (function() {
 		$global.sheepda = $externalize($makeMap($String.keyFor, [{ k: "eval", v: new funcType(Eval) }]), mapType);
 	};
 	Eval = function(source, mode) {
-		var $ptr, _arg, _arg$1, _arg$2, _r, _r$1, _r$2, _r$3, _r$4, _r$5, _r$6, _tmp, _tmp$1, _tmp$10, _tmp$11, _tmp$2, _tmp$3, _tmp$4, _tmp$5, _tmp$6, _tmp$7, _tmp$8, _tmp$9, _tuple, _tuple$1, err, failure, mode, out, output, prog, source, val, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _arg = $f._arg; _arg$1 = $f._arg$1; _arg$2 = $f._arg$2; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; _r$3 = $f._r$3; _r$4 = $f._r$4; _r$5 = $f._r$5; _r$6 = $f._r$6; _tmp = $f._tmp; _tmp$1 = $f._tmp$1; _tmp$10 = $f._tmp$10; _tmp$11 = $f._tmp$11; _tmp$2 = $f._tmp$2; _tmp$3 = $f._tmp$3; _tmp$4 = $f._tmp$4; _tmp$5 = $f._tmp$5; _tmp$6 = $f._tmp$6; _tmp$7 = $f._tmp$7; _tmp$8 = $f._tmp$8; _tmp$9 = $f._tmp$9; _tuple = $f._tuple; _tuple$1 = $f._tuple$1; err = $f.err; failure = $f.failure; mode = $f.mode; out = $f.out; output = $f.output; prog = $f.prog; source = $f.source; val = $f.val; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		var $ptr, _r, _r$1, _r$2, _r$3, _r$4, _r$5, _r$6, _tmp, _tmp$1, _tmp$10, _tmp$11, _tmp$2, _tmp$3, _tmp$4, _tmp$5, _tmp$6, _tmp$7, _tmp$8, _tmp$9, _tuple, _tuple$1, err, failure, mode, out, output, prog, source, val, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; _r$3 = $f._r$3; _r$4 = $f._r$4; _r$5 = $f._r$5; _r$6 = $f._r$6; _tmp = $f._tmp; _tmp$1 = $f._tmp$1; _tmp$10 = $f._tmp$10; _tmp$11 = $f._tmp$11; _tmp$2 = $f._tmp$2; _tmp$3 = $f._tmp$3; _tmp$4 = $f._tmp$4; _tmp$5 = $f._tmp$5; _tmp$6 = $f._tmp$6; _tmp$7 = $f._tmp$7; _tmp$8 = $f._tmp$8; _tmp$9 = $f._tmp$9; _tuple = $f._tuple; _tuple$1 = $f._tuple$1; err = $f.err; failure = $f.failure; mode = $f.mode; out = $f.out; output = $f.output; prog = $f.prog; source = $f.source; val = $f.val; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		out = [out];
 		output = "";
 		failure = "";
@@ -19097,11 +19122,8 @@ $packages["github.com/jtolds/sheepda/bin/sheepdajs"] = (function() {
 			return [output, failure];
 		/* } */ case 6:
 		out[0] = new bytes.Buffer.ptr(sliceType.nil, 0, arrayType.zero(), arrayType$1.zero(), 0);
-		_arg = sheepda.NewContext(out[0], $ifaceNil);
-		_r$3 = sheepda.NewScopeWithBuiltins(); /* */ $s = 8; case 8: if($c) { $c = false; _r$3 = _r$3.$blk(); } if (_r$3 && _r$3.$blk !== undefined) { break s; }
-		_arg$1 = _r$3;
-		_arg$2 = prog;
-		_r$4 = sheepda.Eval(_arg, _arg$1, _arg$2); /* */ $s = 9; case 9: if($c) { $c = false; _r$4 = _r$4.$blk(); } if (_r$4 && _r$4.$blk !== undefined) { break s; }
+		_r$3 = sheepda.NewScopeWithBuiltins(out[0], $ifaceNil); /* */ $s = 8; case 8: if($c) { $c = false; _r$3 = _r$3.$blk(); } if (_r$3 && _r$3.$blk !== undefined) { break s; }
+		_r$4 = sheepda.Eval(_r$3, prog); /* */ $s = 9; case 9: if($c) { $c = false; _r$4 = _r$4.$blk(); } if (_r$4 && _r$4.$blk !== undefined) { break s; }
 		_tuple$1 = _r$4;
 		val = _tuple$1[0];
 		err = _tuple$1[1];
@@ -19141,7 +19163,7 @@ $packages["github.com/jtolds/sheepda/bin/sheepdajs"] = (function() {
 		failure = _tmp$11;
 		$s = -1; return [output, failure];
 		return [output, failure];
-		/* */ } return; } if ($f === undefined) { $f = { $blk: Eval }; } $f.$ptr = $ptr; $f._arg = _arg; $f._arg$1 = _arg$1; $f._arg$2 = _arg$2; $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f._r$3 = _r$3; $f._r$4 = _r$4; $f._r$5 = _r$5; $f._r$6 = _r$6; $f._tmp = _tmp; $f._tmp$1 = _tmp$1; $f._tmp$10 = _tmp$10; $f._tmp$11 = _tmp$11; $f._tmp$2 = _tmp$2; $f._tmp$3 = _tmp$3; $f._tmp$4 = _tmp$4; $f._tmp$5 = _tmp$5; $f._tmp$6 = _tmp$6; $f._tmp$7 = _tmp$7; $f._tmp$8 = _tmp$8; $f._tmp$9 = _tmp$9; $f._tuple = _tuple; $f._tuple$1 = _tuple$1; $f.err = err; $f.failure = failure; $f.mode = mode; $f.out = out; $f.output = output; $f.prog = prog; $f.source = source; $f.val = val; $f.$s = $s; $f.$r = $r; return $f;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: Eval }; } $f.$ptr = $ptr; $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f._r$3 = _r$3; $f._r$4 = _r$4; $f._r$5 = _r$5; $f._r$6 = _r$6; $f._tmp = _tmp; $f._tmp$1 = _tmp$1; $f._tmp$10 = _tmp$10; $f._tmp$11 = _tmp$11; $f._tmp$2 = _tmp$2; $f._tmp$3 = _tmp$3; $f._tmp$4 = _tmp$4; $f._tmp$5 = _tmp$5; $f._tmp$6 = _tmp$6; $f._tmp$7 = _tmp$7; $f._tmp$8 = _tmp$8; $f._tmp$9 = _tmp$9; $f._tuple = _tuple; $f._tuple$1 = _tuple$1; $f.err = err; $f.failure = failure; $f.mode = mode; $f.out = out; $f.output = output; $f.prog = prog; $f.source = source; $f.val = val; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	$pkg.Eval = Eval;
 	$init = function() {
