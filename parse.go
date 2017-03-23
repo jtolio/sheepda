@@ -92,12 +92,16 @@ type ApplicationExpr struct {
 }
 
 func (e *ApplicationExpr) String() string {
+	if l, ok := e.Func.(*LambdaExpr); ok {
+		return fmt.Sprintf("((%s) %s)", l, e.Arg)
+	}
 	return fmt.Sprintf("(%s %s)", e.Func, e.Arg)
 }
 
-// ParseApplication will parse a function application. It assumes the stream
-// has been advanced to the beginning of the expression.
-func ParseApplication(s *Stream) (*ApplicationExpr, error) {
+// ParseSubexpression will parse a parenthetical expression. If only one value
+// is found in parentheses, it is simply an informational subexpression. If
+// multiple values are found, a function application is assumed.
+func ParseSubexpression(s *Stream) (Expr, error) {
 	err := s.AssertMatch(map[rune]bool{'(': true})
 	if err != nil {
 		return nil, err
@@ -106,11 +110,7 @@ func ParseApplication(s *Stream) (*ApplicationExpr, error) {
 	if err != nil {
 		return nil, err
 	}
-	arg, err := ParseExpr(s)
-	if err != nil {
-		return nil, err
-	}
-	result := &ApplicationExpr{Func: fn, Arg: arg}
+	result := fn
 	for {
 		r, err := s.Peek()
 		if err != nil {
@@ -150,7 +150,7 @@ func ParseExpr(s *Stream) (Expr, error) {
 		return ParseLambda(s)
 	}
 	if r == '(' {
-		return ParseApplication(s)
+		return ParseSubexpression(s)
 	}
 	if IsVariableRune(r) {
 		name, err := ParseVariable(s)
