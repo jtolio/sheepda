@@ -25,6 +25,7 @@ addition to defining your own builtins.
  * [In-browser web playground!](https://jtolds.github.io/sheepda/) (courtesy of [GopherJS](https://github.com/gopherjs/gopherjs))
  * [Lambda calculus documentation and how to write fizz buzz](http://www.jtolds.com/writing/2017/03/whiteboard-problems-in-pure-lambda-calculus/)
  * [Go library documentation for sheepda](https://godoc.org/github.com/jtolds/sheepda)
+ * [Standard prelude](interview-probs/prelude.shp) - a sort of standard library, built in lambda calculus
 
 ### Usage
 
@@ -42,7 +43,7 @@ Usage: bin/sheepda [-a] <parsed|output|result> <file1.shp> [<file2.shp> ...]
 ### Examples
 
 Check out
-[interview-probs](https://github.com/jtolds/sheepda/tree/master/interview-probs)
+[interview-probs](interview-probs/) and especially [prelude.sh](interview-probs/prelude.shp)
 for how some abstraction towers can be built up for solving common whiteboard
 problems in pure lambda calculus.
 
