@@ -22,17 +22,17 @@ addition to defining your own builtins.
 
 ### Links
 
- * [In-browser web playground!](https://jtolds.github.io/sheepda/) (courtesy of [GopherJS](https://github.com/gopherjs/gopherjs))
- * [Lambda calculus documentation and how to write fizz buzz](http://www.jtolds.com/writing/2017/03/whiteboard-problems-in-pure-lambda-calculus/)
- * [Go library documentation for sheepda](https://godoc.org/github.com/jtolds/sheepda)
+ * [In-browser web playground!](https://jtolio.github.io/sheepda/) (courtesy of [GopherJS](https://github.com/gopherjs/gopherjs))
+ * [Lambda calculus documentation and how to write fizz buzz](http://www.jtolio.com/writing/2017/03/whiteboard-problems-in-pure-lambda-calculus/)
+ * [Go library documentation for sheepda](https://godoc.org/github.com/jtolio/sheepda)
  * [Standard prelude](interview-probs/prelude.shp) - a sort of standard library, built in lambda calculus
 
 ### Usage
 
 ```
 cd $(mktemp -d)
-GOPATH=$(pwd) go get github.com/jtolds/sheepda/bin/sheepda
-bin/sheepda output src/github.com/jtolds/sheepda/interview-probs/{prelude,hello-world}.shp
+GOPATH=$(pwd) go get github.com/jtolio/sheepda/bin/sheepda
+bin/sheepda output src/github.com/jtolio/sheepda/interview-probs/{prelude,hello-world}.shp
 ```
 
 ```

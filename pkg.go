@@ -3,7 +3,7 @@
 
 // Package sheepda implements a lambda calculus parser and interpreter.
 //
-// See https://jtolds.github.io/sheepda/ for a GopherJS web playground or
-// http://www.jtolds.com/writing/2017/03/whiteboard-problems-in-pure-lambda-calculus/
+// See https://jtolio.github.io/sheepda/ for a GopherJS web playground or
+// http://www.jtolio.com/writing/2017/03/whiteboard-problems-in-pure-lambda-calculus/
 // for a description.
 package sheepda
