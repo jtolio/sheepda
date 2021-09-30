@@ -43,7 +43,7 @@ Usage: bin/sheepda [-a] <parsed|output|result> <file1.shp> [<file2.shp> ...]
 ### Examples
 
 Check out
-[interview-probs](interview-probs/) and especially [prelude.sh](interview-probs/prelude.shp)
+[interview-probs](interview-probs/) and especially [prelude.shp](interview-probs/prelude.shp)
 for how some abstraction towers can be built up for solving common whiteboard
 problems in pure lambda calculus.
 
